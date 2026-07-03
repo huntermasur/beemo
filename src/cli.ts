@@ -6,6 +6,7 @@ import { configFromFlags, type BeemoConfig, type NewFlags } from "./config.js";
 import { runWizard } from "./wizard.js";
 import type { StepResult } from "./run.js";
 import { viteStep } from "./steps/vite.js";
+import { aiDocsStep } from "./steps/ai-docs.js";
 import { installStep } from "./steps/install.js";
 import { gitStep } from "./steps/git.js";
 
@@ -26,6 +27,12 @@ const STEPS: Step[] = [
     run: viteStep,
     fix: (c) => `npm create vite@latest ${c.projectName} -- --template ${c.template}`,
     critical: true,
+  },
+  {
+    name: "Generate AI & docs layer",
+    enabled: () => true,
+    run: aiDocsStep,
+    fix: () => "re-run: beemo add docs (or copy templates from the beemo repo)",
   },
   {
     name: "Install dependencies",

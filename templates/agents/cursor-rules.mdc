@@ -1,0 +1,15 @@
+---
+description: Project-wide agent instructions for {{projectName}}
+alwaysApply: true
+---
+
+All agent instructions for this repository live in AGENTS.md at the repo root — read it
+first, then follow its required-reading list:
+
+1. ai/CONSTITUTION.md — non-negotiable principles
+2. ai/AI_INSTRUCTIONS.md — workflow rules
+3. ai/DOMAIN_RULES.md — domain-specific rules
+4. docs/KNOWLEDGE_MAP.md — codebase map and docs index
+
+Documentation policy is mandatory: notable changes must update the affected docs per
+docs/DOCUMENTATION_GUIDE.md in the same change set.
