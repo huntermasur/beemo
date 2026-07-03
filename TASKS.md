@@ -10,11 +10,11 @@ Full plan context lives in the project README and CLAUDE.md.
 - [x] Verified: `npm run build && npm link && beemo --help`
 
 ## M1 — Core scaffold
-- [ ] Wizard skeleton (`src/wizard.ts`, `src/config.ts`): project name + Vite template
-- [ ] `steps/vite.ts` — wraps `npm create vite@latest`
-- [ ] `steps/install.ts` — npm install in the new project
-- [ ] `steps/git.ts` — git init, .gitignore augmentation, initial commit
-- [ ] Verified: `beemo new test-app` produces a running Vite app with git history
+- [x] Wizard skeleton (`src/wizard.ts`, `src/config.ts`): project name + Vite template
+- [x] `steps/vite.ts` — wraps `npm create vite@latest`
+- [x] `steps/install.ts` — npm install in the new project
+- [x] `steps/git.ts` — git init, .gitignore augmentation, initial commit
+- [x] Verified: `beemo new test-app` produces a running Vite app with git history
 
 ## M2 — AI & docs layer
 - [ ] `src/template.ts` — {{var}} renderer + directory copier
