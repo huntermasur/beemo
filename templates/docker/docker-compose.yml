@@ -1,0 +1,19 @@
+name: {{projectName}}
+
+services:
+  dev:
+    build:
+      context: .
+      target: dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  prod:
+    build:
+      context: .
+      target: prod
+    ports:
+      - "8080:80"

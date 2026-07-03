@@ -7,8 +7,14 @@ import { runWizard } from "./wizard.js";
 import type { StepResult } from "./run.js";
 import { viteStep } from "./steps/vite.js";
 import { aiDocsStep } from "./steps/ai-docs.js";
+import { mcpStep } from "./steps/mcp.js";
+import { dockerStep } from "./steps/docker.js";
 import { installStep } from "./steps/install.js";
+import { skillsStep } from "./steps/skills.js";
+import { codegraphStep } from "./steps/codegraph.js";
 import { gitStep } from "./steps/git.js";
+import { commandExists, run } from "./run.js";
+import { doctor } from "./doctor.js";
 
 interface Step {
   name: string;
@@ -35,10 +41,34 @@ const STEPS: Step[] = [
     fix: () => "re-run: beemo add docs (or copy templates from the beemo repo)",
   },
   {
+    name: "Configure MCP servers",
+    enabled: (c) => c.mcpServers.length > 0,
+    run: mcpStep,
+    fix: () => "create .mcp.json by hand (see https://docs.claude.com/en/docs/claude-code/mcp)",
+  },
+  {
+    name: "Generate Docker setup",
+    enabled: (c) => c.docker,
+    run: dockerStep,
+    fix: () => "copy templates/docker/* from the beemo repo",
+  },
+  {
     name: "Install dependencies",
     enabled: (c) => c.installDeps,
     run: installStep,
     fix: () => "npm install",
+  },
+  {
+    name: "Install skills",
+    enabled: (c) => c.skills.length > 0,
+    run: skillsStep,
+    fix: (c) => c.skills.map((s) => `npx skills add ${s}`).join(" && "),
+  },
+  {
+    name: "Build codegraph index",
+    enabled: (c) => c.mcpServers.includes("codegraph"),
+    run: codegraphStep,
+    fix: () => "npm i -g @colbymchenry/codegraph && codegraph init",
   },
   {
     name: "Initialize git",
@@ -81,6 +111,18 @@ async function scaffold(config: BeemoConfig): Promise<void> {
   p.note(lines.join("\n"), failed.length ? "Done, with some boo-boos" : "All done!");
 
   if (failed.length === 0) {
+    if (config.docker && !config.yes && (await commandExists("docker", ["info"]))) {
+      const build = await p.confirm({ message: "Docker is running — build the images now?", initialValue: false });
+      if (build === true) {
+        spinner.start("docker compose build");
+        try {
+          await run("docker", ["compose", "build"], { cwd: config.targetDir, stdio: "pipe", timeout: 600_000 });
+          spinner.stop(`${pc.green("✔")} docker compose build`);
+        } catch {
+          spinner.stop(`${pc.red("✘")} docker compose build — run it manually to see the error`);
+        }
+      }
+    }
     bmo.success(`${config.projectName} is ready! ${randomQuote()}`);
   } else {
     bmo.warn(`${config.projectName} is mostly ready — ${failed.length} step(s) need your help (see above).`);
@@ -131,7 +173,8 @@ program
   .description("Check that your environment has everything Beemo needs")
   .action(async () => {
     console.log(BMO_BANNER);
-    bmo.warn("The 'doctor' command is still being built. I will be a magic doctor soon!");
+    bmo.say("I will go into your computer and check it like a magic doctor!\n");
+    await doctor();
   });
 
 program.parseAsync();
