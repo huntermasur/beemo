@@ -1,0 +1,41 @@
+{
+  "name": "beemo-cli",
+  "version": "0.1.0",
+  "description": "BMO-themed project scaffolding CLI — Vite projects with an AI-ready setup baked in",
+  "type": "module",
+  "bin": {
+    "beemo": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "cli",
+    "scaffold",
+    "vite",
+    "ai",
+    "bmo"
+  ],
+  "author": "Hunter Masur",
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^0.11.0",
+    "commander": "^14.0.0",
+    "execa": "^9.5.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.0"
+  }
+}
