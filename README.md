@@ -10,12 +10,12 @@ coding agents.
 ## What it sets up
 
 - **Vite app** — any official framework/variant via `npm create vite`
-- **AGENTS.md** — agent-agnostic instruction hub (plus `CLAUDE.md` pointer and
-  optional per-agent adapters)
-- **AI constitution** (`ai/CONSTITUTION.md`), **domain rules**, and **AI workflow
-  instructions**
-- **Docs tree** — knowledge map, architecture doc, documentation guide with
-  granularity levels, ADRs
+- **`.agents/` hub** — the **AI constitution** (`CONSTITUTION.md`), **workflow
+  instructions** (`AI_INSTRUCTIONS.md`), **knowledge map** (`KNOWLEDGE_MAP.md`), and
+  **file index** (`INDEX.md`) — plus a `skills/`
+  folder for installed skills.sh skills — with rules that keep the map and index in sync with the code
+- **Docs tree** — `COMMANDS.md`, an `architecture/` folder (architecture doc, specs, ADRs),
+  a `domain/` folder (documentation guide + domain instructions), and a `files/` folder for user documents
 - **MCP config** (`.mcp.json`) — codegraph, playwright, context7, github (your pick)
 - **Skills** — checklist of top [skills.sh](https://skills.sh) skills
 - **codegraph** — [colbymchenry/codegraph](https://github.com/colbymchenry/codegraph)

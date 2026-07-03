@@ -1,8 +1,12 @@
 # Beemo CLI — Agent Instructions
 
 Beemo is a BMO (Adventure Time)-themed CLI that scaffolds new Vite projects with an
-AI-ready setup: agent instructions, AI constitution, docs tree with knowledge map,
-MCP config, skills.sh skills, codegraph indexing, and Docker.
+AI-ready setup: a `.agents/` hub (constitution, AI instructions, knowledge map, file
+index, plus a `skills/` folder for installed skills), a docs tree
+(COMMANDS.md, an `architecture/` folder with ARCHITECTURE.md + ADRs, a `domain/` folder
+with DOMAIN_DOCUMENTATION.md + DOMAIN_INSTRUCTIONS.md, and a `files/` folder for user
+documents), MCP config,
+skills.sh skills, codegraph indexing, and Docker.
 
 ## Commands
 - `npm run build` — bundle `src/cli.ts` to `dist/cli.js` via tsup
@@ -18,6 +22,8 @@ MCP config, skills.sh skills, codegraph indexing, and Docker.
 - `src/template.ts` — copies `templates/` trees, replacing `{{var}}` placeholders
 - `src/run.ts` — execa wrapper with themed spinners
 - `src/steps/*.ts` — one module per scaffold step, each exporting `run(config)`
+  (`steps/agents.ts` generates root agent instruction files — CLAUDE.md, AGENTS.md
+  (always), copilot/cursor/gemini — that force-read `.agents/` and skim skills/docs)
 - `templates/` — every file generated into scaffolded projects; ships in the npm package
 
 ## Conventions

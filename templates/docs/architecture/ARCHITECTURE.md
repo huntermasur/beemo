@@ -10,7 +10,8 @@
 
 The project follows the standard Vite layout: application code in `src/`, static assets
 in `public/`, entry point wired through `index.html`. See the folder map in
-[KNOWLEDGE_MAP.md](KNOWLEDGE_MAP.md).
+[../../.agents/KNOWLEDGE_MAP.md](../../.agents/KNOWLEDGE_MAP.md) and the file links in
+[../../.agents/INDEX.md](../../.agents/INDEX.md).
 
 ### Module boundaries
 

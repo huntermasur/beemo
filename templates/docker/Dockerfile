@@ -3,7 +3,9 @@
 FROM node:22-alpine AS base
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm ci
+# Use the lockfile for reproducible installs when present, otherwise fall back
+# to npm install (a project may be scaffolded with --no-install and no lockfile).
+RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 COPY . .
 
 # --- dev: Vite dev server with HMR (docker compose up dev) ---

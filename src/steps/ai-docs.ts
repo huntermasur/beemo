@@ -52,6 +52,14 @@ export function templateVars(config: BeemoConfig): TemplateVars {
       ? "For code questions (where is X defined, what calls Y), query the codegraph MCP server before manual exploration."
       : "",
     extraFolderRows: config.docker ? "| `Dockerfile`, `docker-compose.yml` | Container setup for dev and prod |" : "",
+    extraIndexRows: [
+      ...(config.mcpServers.length
+        ? [`| [../.mcp.json](../.mcp.json) | MCP server configuration (${config.mcpServers.join(", ")}) |`]
+        : []),
+      ...(config.docker
+        ? ["| [../Dockerfile](../Dockerfile), [../docker-compose.yml](../docker-compose.yml) | Container setup for dev and prod |"]
+        : []),
+    ].join("\n"),
     stackExtras: config.docker
       ? "- **Containers:** multi-stage Dockerfile (dev server + nginx prod) with docker-compose"
       : "",
@@ -64,24 +72,12 @@ export function templateVars(config: BeemoConfig): TemplateVars {
   };
 }
 
-/** Generate AGENTS.md, agent adapters, ai/, docs/, and the project README. */
+/** Generate .agents/, docs/, and the project README. */
 export async function aiDocsStep(config: BeemoConfig): Promise<void> {
   const vars = templateVars(config);
   const dest = config.targetDir;
 
-  renderFile("agents/AGENTS.md", path.join(dest, "AGENTS.md"), vars);
-  if (config.agents.includes("claude")) {
-    renderFile("agents/CLAUDE.md", path.join(dest, "CLAUDE.md"), vars);
-  }
-  if (config.agents.includes("gemini")) {
-    renderFile("agents/GEMINI.md", path.join(dest, "GEMINI.md"), vars);
-  }
-  if (config.agents.includes("cursor")) {
-    renderFile("agents/cursor-rules.mdc", path.join(dest, ".cursor", "rules", "project.mdc"), vars);
-  }
-  // Codex CLI reads AGENTS.md natively — no adapter needed.
-
-  renderDir("ai", path.join(dest, "ai"), vars);
+  renderDir(".agents", path.join(dest, ".agents"), vars);
   renderDir("docs", path.join(dest, "docs"), vars);
   renderFile("project/README.md", path.join(dest, "README.md"), vars);
 }

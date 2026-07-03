@@ -22,26 +22,47 @@ export const VITE_TEMPLATES = [
 ] as const;
 export type ViteTemplate = (typeof VITE_TEMPLATES)[number];
 
-export const AGENTS = ["claude", "cursor", "codex", "gemini"] as const;
-export type Agent = (typeof AGENTS)[number];
-
 export const MCP_SERVERS = ["codegraph", "playwright", "context7", "github"] as const;
 export type McpServer = (typeof MCP_SERVERS)[number];
 
+/** AI agents that can be wired up. Each maps to a root instruction file. */
+export interface AgentChoice {
+  id: string;
+  label: string;
+  /** Path (relative to project root) of the instruction file to generate. */
+  file: string;
+  hint: string;
+}
+
+export const AGENT_CHOICES: AgentChoice[] = [
+  { id: "claude", label: "Claude Code", file: "CLAUDE.md", hint: "Anthropic Claude Code" },
+  { id: "copilot", label: "GitHub Copilot", file: ".github/copilot-instructions.md", hint: "VS Code / GitHub Copilot" },
+  { id: "cursor", label: "Cursor", file: ".cursor/rules/beemo.mdc", hint: "Cursor editor" },
+  { id: "gemini", label: "Gemini CLI", file: "GEMINI.md", hint: "Google Gemini CLI" },
+  { id: "codex", label: "OpenAI Codex", file: "AGENTS.md", hint: "uses the shared AGENTS.md" },
+  { id: "opencode", label: "opencode", file: "AGENTS.md", hint: "uses the shared AGENTS.md" },
+] as const;
+
+export const AGENT_IDS = AGENT_CHOICES.map((a) => a.id);
+export type AgentId = (typeof AGENT_CHOICES)[number]["id"];
+
 /** Curated shortlist of the most-installed skills on skills.sh (fallback when live fetch fails). */
 export interface SkillChoice {
-  /** Argument passed to `npx skills add` */
+  /**
+   * Source passed to `npx skills add`: `owner/repo@skill` pins a single skill,
+   * bare `owner/repo` installs every skill in the repo.
+   */
   installArg: string;
   name: string;
   hint: string;
 }
 
 export const CURATED_SKILLS: SkillChoice[] = [
-  { installArg: "vercel-labs/skills", name: "find-skills", hint: "lets your agent discover and install more skills" },
-  { installArg: "anthropics/skills", name: "anthropics/skills", hint: "Anthropic's official skills (frontend-design & more)" },
-  { installArg: "vercel-labs/agent-skills", name: "vercel-react-best-practices", hint: "React/Next.js best practices" },
-  { installArg: "vercel-labs/agent-browser", name: "agent-browser", hint: "browser automation for agents" },
-  { installArg: "mattpocock/skills", name: "grill-me", hint: "brutally honest code review" },
+  { installArg: "vercel-labs/skills@find-skills", name: "find-skills", hint: "lets your agent discover and install more skills" },
+  { installArg: "anthropics/skills", name: "anthropics/skills (all)", hint: "installs Anthropic's full official skill collection (frontend-design & ~15 more)" },
+  { installArg: "vercel-labs/agent-skills@vercel-react-best-practices", name: "vercel-react-best-practices", hint: "React/Next.js best practices" },
+  { installArg: "vercel-labs/agent-browser@agent-browser", name: "agent-browser", hint: "browser automation for agents" },
+  { installArg: "mattpocock/skills@grill-me", name: "grill-me", hint: "brutally honest code review" },
 ];
 
 export interface BeemoConfig {
@@ -49,10 +70,11 @@ export interface BeemoConfig {
   /** Absolute path of the directory the project is created in. */
   targetDir: string;
   template: ViteTemplate;
-  agents: Agent[];
   mcpServers: McpServer[];
-  /** `npx skills add` arguments to install. */
+  /** `npx skills add` sources to install, each `owner/repo@skill` or bare `owner/repo`. */
   skills: string[];
+  /** Agent ids selected (see AGENT_CHOICES). AGENTS.md is always generated regardless. */
+  agents: string[];
   docker: boolean;
   git: boolean;
   installDeps: boolean;
@@ -63,9 +85,9 @@ export interface BeemoConfig {
 /** Raw commander flag values for `beemo new`. */
 export interface NewFlags {
   template?: string;
-  agents?: string;
   mcp?: string;
   skills?: string;
+  agents?: string;
   docker?: boolean;
   git?: boolean;
   install?: boolean;
@@ -74,9 +96,9 @@ export interface NewFlags {
 
 export const DEFAULTS = {
   template: "react-ts" as ViteTemplate,
-  agents: ["claude"] as Agent[],
   mcpServers: ["codegraph"] as McpServer[],
   skills: [] as string[],
+  agents: ["claude", "copilot"] as string[],
   docker: true,
   git: true,
   installDeps: true,
@@ -119,13 +141,13 @@ export function configFromFlags(name: string | undefined, flags: NewFlags): Part
     }
     partial.template = flags.template as ViteTemplate;
   }
-  partial.agents = parseList(flags.agents, AGENTS, "agent");
   partial.mcpServers = parseList(flags.mcp, MCP_SERVERS, "MCP server");
   if (flags.skills !== undefined) {
     partial.skills = flags.skills === "none" || flags.skills.trim() === ""
       ? []
       : flags.skills.split(",").map((s) => s.trim()).filter(Boolean);
   }
+  partial.agents = parseList(flags.agents, AGENT_IDS, "agent");
   if (flags.docker !== undefined) partial.docker = flags.docker;
   if (flags.git !== undefined) partial.git = flags.git;
   if (flags.install !== undefined) partial.installDeps = flags.install;
@@ -140,9 +162,9 @@ export function withDefaults(partial: Partial<BeemoConfig>): BeemoConfig {
     projectName: partial.projectName,
     targetDir: path.resolve(process.cwd(), partial.projectName),
     template: partial.template ?? DEFAULTS.template,
-    agents: partial.agents ?? DEFAULTS.agents,
     mcpServers: partial.mcpServers ?? DEFAULTS.mcpServers,
     skills: partial.skills ?? DEFAULTS.skills,
+    agents: partial.agents ?? DEFAULTS.agents,
     docker: partial.docker ?? DEFAULTS.docker,
     git: partial.git ?? DEFAULTS.git,
     installDeps: partial.installDeps ?? DEFAULTS.installDeps,

@@ -3,25 +3,17 @@ import path from "node:path";
 import fs from "node:fs";
 import pc from "picocolors";
 import {
-  AGENTS,
+  AGENT_CHOICES,
   CURATED_SKILLS,
   DEFAULTS,
   MCP_SERVERS,
   VITE_TEMPLATES,
   validateProjectName,
   withDefaults,
-  type Agent,
   type BeemoConfig,
   type McpServer,
   type ViteTemplate,
 } from "./config.js";
-
-const AGENT_LABELS: Record<Agent, string> = {
-  claude: "Claude Code",
-  cursor: "Cursor",
-  codex: "Codex CLI",
-  gemini: "Gemini CLI",
-};
 
 const MCP_HINTS: Record<McpServer, string> = {
   codegraph: "local code knowledge graph (surgical AI context)",
@@ -75,17 +67,6 @@ export async function runWizard(partial: Partial<BeemoConfig>): Promise<BeemoCon
       }),
     );
 
-  const agents =
-    partial.agents ??
-    ensure(
-      await p.multiselect<Agent>({
-        message: "Which AI agents do you use? (AGENTS.md is always generated — this adds agent-specific adapters)",
-        initialValues: DEFAULTS.agents,
-        required: false,
-        options: AGENTS.map((a) => ({ value: a, label: AGENT_LABELS[a] })),
-      }),
-    );
-
   const mcpServers =
     partial.mcpServers ??
     ensure(
@@ -107,6 +88,17 @@ export async function runWizard(partial: Partial<BeemoConfig>): Promise<BeemoCon
       }),
     );
 
+  const agents =
+    partial.agents ??
+    ensure(
+      await p.multiselect<string>({
+        message: "Which AI agents are you using? (AGENTS.md is always included)",
+        initialValues: DEFAULTS.agents,
+        required: false,
+        options: AGENT_CHOICES.map((a) => ({ value: a.id, label: a.label, hint: a.hint })),
+      }),
+    );
+
   const docker =
     partial.docker ??
     ensure(await p.confirm({ message: "Set up Docker? (Dockerfile + compose)", initialValue: DEFAULTS.docker }));
@@ -121,9 +113,9 @@ export async function runWizard(partial: Partial<BeemoConfig>): Promise<BeemoCon
 
   const summary = [
     `${pc.dim("project")}   ${projectName} (${template})`,
-    `${pc.dim("agents")}    ${agents.length ? agents.map((a) => AGENT_LABELS[a]).join(", ") : "AGENTS.md only"}`,
     `${pc.dim("mcp")}       ${mcpServers.length ? mcpServers.join(", ") : "none"}`,
     `${pc.dim("skills")}    ${skills.length ? skills.join(", ") : "none"}`,
+    `${pc.dim("agents")}    ${agents.length ? agents.join(", ") : "none"} ${pc.dim("(+ AGENTS.md)")}`,
     `${pc.dim("docker")}    ${docker ? "yes" : "no"}   ${pc.dim("git")} ${git ? "yes" : "no"}   ${pc.dim("install")} ${installDeps ? "yes" : "no"}`,
   ].join("\n");
   p.note(summary, "Here is the plan!");
@@ -135,9 +127,9 @@ export async function runWizard(partial: Partial<BeemoConfig>): Promise<BeemoCon
     projectName,
     targetDir,
     template,
-    agents,
     mcpServers,
     skills,
+    agents,
     docker,
     git,
     installDeps,

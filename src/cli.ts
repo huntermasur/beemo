@@ -7,11 +7,13 @@ import { runWizard } from "./wizard.js";
 import type { StepResult } from "./run.js";
 import { viteStep } from "./steps/vite.js";
 import { aiDocsStep } from "./steps/ai-docs.js";
+import { agentsStep } from "./steps/agents.js";
 import { mcpStep } from "./steps/mcp.js";
 import { dockerStep } from "./steps/docker.js";
 import { installStep } from "./steps/install.js";
 import { skillsStep } from "./steps/skills.js";
 import { codegraphStep } from "./steps/codegraph.js";
+import { envStep } from "./steps/env.js";
 import { gitStep } from "./steps/git.js";
 import { commandExists, run } from "./run.js";
 import { doctor } from "./doctor.js";
@@ -41,6 +43,12 @@ const STEPS: Step[] = [
     fix: () => "re-run: beemo add docs (or copy templates from the beemo repo)",
   },
   {
+    name: "Generate agent instruction files",
+    enabled: () => true,
+    run: agentsStep,
+    fix: () => "create AGENTS.md (and CLAUDE.md etc.) by hand pointing agents at .agents/",
+  },
+  {
     name: "Configure MCP servers",
     enabled: (c) => c.mcpServers.length > 0,
     run: mcpStep,
@@ -62,13 +70,19 @@ const STEPS: Step[] = [
     name: "Install skills",
     enabled: (c) => c.skills.length > 0,
     run: skillsStep,
-    fix: (c) => c.skills.map((s) => `npx skills add ${s}`).join(" && "),
+    fix: (c) => c.skills.map((s) => `npx skills add ${s} --agent universal -y`).join(" && "),
   },
   {
     name: "Build codegraph index",
     enabled: (c) => c.mcpServers.includes("codegraph"),
     run: codegraphStep,
     fix: () => "npm i -g @colbymchenry/codegraph && codegraph init",
+  },
+  {
+    name: "Generate env files",
+    enabled: () => true,
+    run: envStep,
+    fix: () => "copy .env.example to .env by hand",
   },
   {
     name: "Initialize git",
@@ -147,9 +161,9 @@ program
   .argument("[name]", "project name")
   .description("Scaffold a new project")
   .option("-t, --template <template>", "Vite template (e.g. react-ts, vue-ts, svelte-ts)")
-  .option("--agents <list>", "comma-separated agents: claude,cursor,codex,gemini (or 'none')")
   .option("--mcp <list>", "comma-separated MCP servers: codegraph,playwright,context7,github (or 'none')")
-  .option("--skills <list>", "comma-separated skills.sh repos to install (or 'none')")
+  .option("--skills <list>", "comma-separated skills.sh sources: owner/repo@skill, or owner/repo for a whole repo (or 'none')")
+  .option("--agents <list>", "comma-separated AI agents: claude,copilot,cursor,gemini,codex,opencode (or 'none'); AGENTS.md always included")
   .option("--docker", "generate Docker setup")
   .option("--no-docker", "skip Docker setup")
   .option("--no-git", "skip git init")

@@ -15,12 +15,12 @@ npm run preview   # preview the production build
 
 - `src/` — application code
 - `public/` — static assets
-- `ai/` — rules for AI coding agents ([constitution](ai/CONSTITUTION.md), [workflow](ai/AI_INSTRUCTIONS.md), [domain rules](ai/DOMAIN_RULES.md))
-- `docs/` — documentation, starting at the [knowledge map](docs/KNOWLEDGE_MAP.md)
+- `.agents/` — AI agent hub: [constitution](.agents/CONSTITUTION.md), [workflow](.agents/AI_INSTRUCTIONS.md), [knowledge map](.agents/KNOWLEDGE_MAP.md), [file index](.agents/INDEX.md), and `skills/` for installed skills.sh skills
+- `docs/` — documentation: [commands](docs/COMMANDS.md), [architecture](docs/architecture/ARCHITECTURE.md), [domain](docs/domain/DOMAIN_DOCUMENTATION.md), ADRs, and [user files](docs/files/)
 
 ## Working with AI agents
 
-This project is AI-ready. Agents should start at [AGENTS.md](AGENTS.md); it enforces a
-documentation policy ([docs/DOCUMENTATION_GUIDE.md](docs/DOCUMENTATION_GUIDE.md)) so the
+This project is AI-ready. Agents should start at [.agents/AI_INSTRUCTIONS.md](.agents/AI_INSTRUCTIONS.md); it enforces a
+documentation policy ([docs/domain/DOMAIN_DOCUMENTATION.md](docs/domain/DOMAIN_DOCUMENTATION.md)) so the
 docs stay trustworthy as the code evolves.
 {{aiExtras}}

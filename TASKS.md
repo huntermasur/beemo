@@ -19,13 +19,16 @@ Full plan context lives in the project README and CLAUDE.md.
 ## M2 — AI & docs layer
 - [x] `src/template.ts` — {{var}} renderer + directory copier
 - [x] Templates: AGENTS.md, CLAUDE.md, ai/ (CONSTITUTION, DOMAIN_RULES, AI_INSTRUCTIONS)
-- [x] Templates: docs/ (KNOWLEDGE_MAP, ARCHITECTURE, DOCUMENTATION_GUIDE, adr/0001)
+- [x] Templates: docs/ (COMMANDS, architecture/ARCHITECTURE + adr/0001, domain/DOMAIN_DOCUMENTATION + DOMAIN_INSTRUCTIONS, files/)
 - [x] README regeneration for scaffolded projects
 - [x] Verified: scaffolded project has full docs tree with placeholders resolved (0 unresolved `{{}}`)
 
 ## M3 — MCP + agent adapters
 - [x] `.mcp.json` generation from server checklist (codegraph, playwright, context7, github)
 - [x] `.cursor/rules/project.mdc` adapter when Cursor selected; GEMINI.md for Gemini; Codex uses AGENTS.md natively
+- [x] `steps/agents.ts` — agent picker in the wizard (`--agents`) writes root instruction
+      files (CLAUDE.md, .github/copilot-instructions.md, .cursor/rules/beemo.mdc, GEMINI.md);
+      AGENTS.md always generated; every file force-reads `.agents/` and skims skills/docs
 - [x] Verified: generated .mcp.json is valid JSON with all selected servers
 
 ## M4 — Skills
