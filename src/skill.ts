@@ -2,7 +2,7 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { bail, ensure } from "./prompts.js";
 import { run } from "./run.js";
-import { bmo } from "./theme.js";
+import { neptr } from "./theme.js";
 import { gatherCandidates, type SkillCandidate, type SecurityVerdict } from "./skills-registry.js";
 
 export interface SkillFlags {
@@ -62,7 +62,7 @@ async function installSkills(sources: string[], cwd: string): Promise<{ ok: stri
 }
 
 /**
- * `bmo skill <query>` — search skills.sh, keep only well-downloaded skills
+ * `neptr skill <query>` — search skills.sh, keep only well-downloaded skills
  * whose security audits all pass, and let the user pick any number to install
  * into the current project's .agents/skills/ without leaving the editor.
  */
@@ -71,7 +71,7 @@ export async function runSkill(query: string | undefined, flags: SkillFlags): Pr
   const minInstalls = parseCount(flags.minInstalls, DEFAULT_MIN_INSTALLS);
   const limit = parseCount(flags.limit, DEFAULT_LIMIT);
 
-  p.intro(pc.bgGreen(pc.black(" bmo skill ")));
+  p.intro(pc.bgGreen(pc.black(" neptr skill ")));
 
   let term = query?.trim();
   if (!term) {
@@ -97,7 +97,7 @@ export async function runSkill(query: string | undefined, flags: SkillFlags): Pr
   spinner.stop(`${pc.green("✔")} found ${candidates.length} skill(s) with 1000+ installs`);
 
   if (candidates.length === 0) {
-    bmo.warn(`No popular skills matched "${term}". Try different words or lower the bar with --min-installs 0.`);
+    neptr.warn(`No popular skills matched "${term}". Try different words or lower the bar with --min-installs 0.`);
     p.outro("Nothing to install this time.");
     return;
   }
@@ -106,7 +106,7 @@ export async function runSkill(query: string | undefined, flags: SkillFlags): Pr
   const shown = flags.includeUnverified ? candidates : verified;
 
   if (shown.length === 0) {
-    bmo.warn(
+    neptr.warn(
       `Found ${candidates.length} match(es), but none have passed every security audit yet. ` +
         `Re-run with --include-unverified to see them (and their audit status).`,
     );
@@ -159,9 +159,9 @@ export async function runSkill(query: string | undefined, flags: SkillFlags): Pr
   }
 
   if (ok.length) {
-    bmo.success(`New skills installed! ${pc.dim("Restart your agent so it picks them up.")}`);
+    neptr.success(`New skills installed! ${pc.dim("Restart your agent so it picks them up.")}`);
   } else {
-    bmo.warn("None of the skills installed — check the retry commands above.");
+    neptr.warn("None of the skills installed — check the retry commands above.");
   }
-  p.outro("BMO went shopping for skills!");
+  p.outro("NEPTR went shopping for skills!");
 }

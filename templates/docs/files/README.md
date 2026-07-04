@@ -22,4 +22,4 @@ work but isn't source code.
 - Never move secrets or credentials into this folder — those belong in `.env`
   (gitignored), never committed.
 
-> Seeded empty by BMO. Add files as the user provides them.
+> Seeded empty by NEPTR. Add files as the user provides them.

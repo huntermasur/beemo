@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { BMOConfig, McpServer } from "../config.js";
+import type { NEPTRConfig, McpServer } from "../config.js";
 
 /**
  * Server entries for .mcp.json (project-scoped MCP config, understood by
@@ -29,7 +29,7 @@ const SERVER_CONFIGS: Record<McpServer, object> = {
 };
 
 /** Only runs when at least one server is selected (gated by `enabled` in cli.ts). */
-export async function mcpStep(config: BMOConfig): Promise<void> {
+export async function mcpStep(config: NEPTRConfig): Promise<void> {
   const mcpServers = Object.fromEntries(config.mcpServers.map((s) => [s, SERVER_CONFIGS[s]]));
   const file = path.join(config.targetDir, ".mcp.json");
   fs.writeFileSync(file, JSON.stringify({ mcpServers }, null, 2) + "\n");

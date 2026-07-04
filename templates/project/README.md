@@ -1,6 +1,6 @@
 # {{projectName}}
 
-{{stack}} app scaffolded with [BMO](https://github.com/huntermasur/bmo) on {{date}}.
+{{stack}} app scaffolded with [NEPTR](https://github.com/huntermasur/neptr) on {{date}}.
 
 ## Getting started
 

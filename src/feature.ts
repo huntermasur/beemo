@@ -4,7 +4,7 @@ import path from "node:path";
 import pc from "picocolors";
 import { bail, ensure } from "./prompts.js";
 import { renderDir, renderFile } from "./template.js";
-import { bmo } from "./theme.js";
+import { neptr } from "./theme.js";
 
 export interface FeatureFlags {
   name?: string;
@@ -29,24 +29,24 @@ export function validateFeatureName(name: string): string | undefined {
 }
 
 /**
- * `bmo feature` — scaffold a plan → implement → review workspace at
+ * `neptr feature` — scaffold a plan → implement → review workspace at
  * .agents/features/<slug>/ in the current project, then print the copy-paste
- * prompts that hand each phase to an agent. BMO never calls an LLM itself.
+ * prompts that hand each phase to an agent. NEPTR never calls an LLM itself.
  */
 export async function runFeature(description: string | undefined, flags: FeatureFlags): Promise<void> {
   const projectDir = process.cwd();
   const agentsDir = path.join(projectDir, ".agents");
   const featuresDir = path.join(agentsDir, "features");
 
-  p.intro(pc.bgGreen(pc.black(" bmo feature ")));
+  p.intro(pc.bgGreen(pc.black(" neptr feature ")));
 
   // This command runs inside an existing project; .agents/ is the marker that
-  // it was scaffolded by BMO. Offer to bootstrap just the features folder
+  // it was scaffolded by NEPTR. Offer to bootstrap just the features folder
   // elsewhere (--yes accepts the default and bootstraps silently).
   if (!fs.existsSync(agentsDir) && !flags.yes) {
     const go = ensure(
       await p.confirm({
-        message: "No .agents/ hub here — this doesn't look like a BMO project. Create just .agents/features/ and continue?",
+        message: "No .agents/ hub here — this doesn't look like a NEPTR project. Create just .agents/features/ and continue?",
         initialValue: true,
       }),
     );
@@ -58,7 +58,7 @@ export async function runFeature(description: string | undefined, flags: Feature
     const err = validateFeatureName(featureName);
     if (err) throw new Error(err);
   } else {
-    if (flags.yes) throw new Error("--yes needs --name <name> so BMO knows what to call the feature");
+    if (flags.yes) throw new Error("--yes needs --name <name> so NEPTR knows what to call the feature");
     featureName = ensure(
       await p.text({
         message: "Short feature name? (becomes the folder name)",
@@ -87,7 +87,7 @@ export async function runFeature(description: string | undefined, flags: Feature
   const featureDir = path.join(featuresDir, slug);
   const featurePath = `.agents/features/${slug}`;
   if (fs.existsSync(featureDir)) {
-    p.log.error(`${featurePath} already exists. BMO does not overwrite friends — pick another name.`);
+    p.log.error(`${featurePath} already exists. NEPTR does not overwrite friends — pick another name.`);
     process.exit(1);
   }
 
@@ -103,7 +103,7 @@ export async function runFeature(description: string | undefined, flags: Feature
   }
 
   // The shared features README is var-free, so it renders fine even in
-  // projects BMO never scaffolded.
+  // projects NEPTR never scaffolded.
   const featuresReadme = path.join(featuresDir, "README.md");
   if (!fs.existsSync(featuresReadme)) {
     renderFile(".agents/features/README.md", featuresReadme, {});
@@ -116,7 +116,7 @@ export async function runFeature(description: string | undefined, flags: Feature
   });
 
   p.log.success(`Feature workspace created at ${featurePath}/`);
-  p.outro("BMO made a new game cartridge!");
+  p.outro("NEPTR made a new game cartridge!");
 
   // Plain console.log for the prompts themselves: clack's gutter characters
   // would be captured when the user copies the line.
@@ -133,5 +133,5 @@ export async function runFeature(description: string | undefined, flags: Feature
   console.log(
     `Read ${featurePath}/phases/review.md and follow it exactly: verify the implementation in this repo against ${featurePath}/PLAN.md, fix what's broken, and set the status to done.\n`,
   );
-  bmo.say("Paste each prompt into a fresh agent session, and wait for the pause between phases!");
+  neptr.say("Paste each prompt into a fresh agent session, and wait for the pause between phases!");
 }

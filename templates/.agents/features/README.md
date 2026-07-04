@@ -1,7 +1,7 @@
 # Feature workspaces
 
 Each subfolder here is one feature moving through **plan → implement → review**,
-created by `bmo feature`.
+created by `neptr feature`.
 
 | File | Purpose |
 | --- | --- |

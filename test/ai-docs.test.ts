@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { stackLabel, templateVars } from "../src/steps/ai-docs.js";
-import type { BMOConfig } from "../src/config.js";
+import type { NEPTRConfig } from "../src/config.js";
 
 describe("stackLabel", () => {
   it("labels TS and JS variants", () => {
@@ -11,7 +11,7 @@ describe("stackLabel", () => {
   });
 });
 
-function config(overrides: Partial<BMOConfig>): BMOConfig {
+function config(overrides: Partial<NEPTRConfig>): NEPTRConfig {
   return {
     projectName: "test-app",
     targetDir: "/tmp/test-app",

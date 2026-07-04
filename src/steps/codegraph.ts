@@ -1,5 +1,5 @@
 import { commandExists, run } from "../run.js";
-import type { BMOConfig } from "../config.js";
+import type { NEPTRConfig } from "../config.js";
 
 /**
  * Build the project's codegraph index. Installs the codegraph CLI globally
@@ -7,7 +7,7 @@ import type { BMOConfig } from "../config.js";
  * the consent for that). Project-level MCP wiring is handled by .mcp.json,
  * so `codegraph install` is not needed here.
  */
-export async function codegraphStep(config: BMOConfig): Promise<string | void> {
+export async function codegraphStep(config: NEPTRConfig): Promise<string | void> {
   let installedNow = false;
   if (!(await commandExists("codegraph"))) {
     await run("npm", ["install", "-g", "@colbymchenry/codegraph"], {

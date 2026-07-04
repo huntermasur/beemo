@@ -1,6 +1,6 @@
 import path from "node:path";
 import { renderDir, renderFile, type TemplateVars } from "../template.js";
-import type { BMOConfig, ViteTemplate } from "../config.js";
+import type { NEPTRConfig, ViteTemplate } from "../config.js";
 
 const STACK_NAMES: Record<string, string> = {
   react: "React",
@@ -21,7 +21,7 @@ export function stackLabel(template: ViteTemplate): string {
   return `${name} + ${isTs ? "TypeScript" : "JavaScript"} + Vite`;
 }
 
-export function templateVars(config: BMOConfig): TemplateVars {
+export function templateVars(config: NEPTRConfig): TemplateVars {
   const date = new Date().toISOString().slice(0, 10);
 
   const toolingLines: string[] = [];
@@ -86,7 +86,7 @@ export function templateVars(config: BMOConfig): TemplateVars {
 }
 
 /** Generate .agents/, docs/, and the project README. */
-export async function aiDocsStep(config: BMOConfig): Promise<void> {
+export async function aiDocsStep(config: NEPTRConfig): Promise<void> {
   const vars = templateVars(config);
   const dest = config.targetDir;
 

@@ -1,8 +1,8 @@
 import * as p from "@clack/prompts";
 
-/** Cancel the current command in BMO style. */
+/** Cancel the current command in NEPTR style. */
 export function bail(): never {
-  p.cancel("BMO powers down... come back and play soon!");
+  p.cancel("NEPTR powers down... come back and play soon!");
   process.exit(0);
 }
 

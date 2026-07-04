@@ -1,10 +1,10 @@
 {
-  "name": "bmo-cli",
+  "name": "neptr-cli",
   "version": "0.1.0",
-  "description": "BMO-themed project scaffolding CLI — Vite projects with an AI-ready setup baked in",
+  "description": "NEPTR-themed project scaffolding CLI — Vite projects with an AI-ready setup baked in",
   "type": "module",
   "bin": {
-    "bmo": "dist/cli.js"
+    "neptr": "dist/cli.js"
   },
   "files": [
     "dist",
@@ -12,11 +12,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/huntermasur/bmo.git"
+    "url": "git+https://github.com/huntermasur/neptr.git"
   },
-  "homepage": "https://github.com/huntermasur/bmo#readme",
+  "homepage": "https://github.com/huntermasur/neptr#readme",
   "bugs": {
-    "url": "https://github.com/huntermasur/bmo/issues"
+    "url": "https://github.com/huntermasur/neptr/issues"
   },
   "engines": {
     "node": ">=20"
@@ -32,7 +32,7 @@
     "scaffold",
     "vite",
     "ai",
-    "bmo"
+    "neptr"
   ],
   "author": "Hunter Masur",
   "license": "MIT",

@@ -2,8 +2,8 @@ import { createRequire } from "node:module";
 import { Command } from "commander";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { BMO_BANNER, bmo, randomQuote } from "./theme.js";
-import { configFromFlags, type BMOConfig, type NewFlags } from "./config.js";
+import { NEPTR_BANNER, neptr, randomQuote } from "./theme.js";
+import { configFromFlags, type NEPTRConfig, type NewFlags } from "./config.js";
 import { runWizard } from "./wizard.js";
 import type { StepResult } from "./run.js";
 import { viteStep } from "./steps/vite.js";
@@ -23,10 +23,10 @@ import { runSkill, type SkillFlags } from "./skill.js";
 
 interface Step {
   name: string;
-  enabled: (c: BMOConfig) => boolean;
-  run: (c: BMOConfig) => Promise<string | void>;
+  enabled: (c: NEPTRConfig) => boolean;
+  run: (c: NEPTRConfig) => Promise<string | void>;
   /** Manual command shown in the summary if this step fails. */
-  fix: (c: BMOConfig) => string;
+  fix: (c: NEPTRConfig) => string;
   /** When true, a failure aborts the scaffold (nothing to layer onto). */
   critical?: boolean;
 }
@@ -43,7 +43,7 @@ const STEPS: Step[] = [
     name: "Generate AI & docs layer",
     enabled: () => true,
     run: aiDocsStep,
-    fix: () => "copy templates/.agents and templates/docs from the bmo repo into the project",
+    fix: () => "copy templates/.agents and templates/docs from the neptr repo into the project",
   },
   {
     name: "Generate agent instruction files",
@@ -61,7 +61,7 @@ const STEPS: Step[] = [
     name: "Generate Docker setup",
     enabled: (c) => c.docker,
     run: dockerStep,
-    fix: () => "copy templates/docker/* from the bmo repo",
+    fix: () => "copy templates/docker/* from the neptr repo",
   },
   {
     name: "Install dependencies",
@@ -95,7 +95,7 @@ const STEPS: Step[] = [
   },
 ];
 
-async function scaffold(config: BMOConfig): Promise<void> {
+async function scaffold(config: NEPTRConfig): Promise<void> {
   const results: StepResult[] = [];
   const spinner = p.spinner();
 
@@ -114,10 +114,10 @@ async function scaffold(config: BMOConfig): Promise<void> {
       results.push({ name: step.name, status: "failed", note: message, fix: step.fix(config) });
       spinner.stop(`${pc.red("✘")} ${step.name}`);
       if (step.critical) {
-        bmo.error(`I could not even start: ${message}`);
+        neptr.error(`I could not even start: ${message}`);
         process.exit(1);
       }
-      bmo.warn(`${step.name} did not work, but I kept going. You can do it by hand later.`);
+      neptr.warn(`${step.name} did not work, but I kept going. You can do it by hand later.`);
     }
   }
 
@@ -145,9 +145,9 @@ async function scaffold(config: BMOConfig): Promise<void> {
         }
       }
     }
-    bmo.success(`${config.projectName} is ready! ${randomQuote()}`);
+    neptr.success(`${config.projectName} is ready! ${randomQuote()}`);
   } else {
-    bmo.warn(`${config.projectName} is mostly ready — ${failed.length} step(s) need your help (see above).`);
+    neptr.warn(`${config.projectName} is mostly ready — ${failed.length} step(s) need your help (see above).`);
   }
   console.log(
     `\n  ${pc.bold("Next steps:")}\n` +
@@ -164,8 +164,8 @@ const { version } = createRequire(import.meta.url)("../package.json") as { versi
 const program = new Command();
 
 program
-  .name("bmo")
-  .description("BMO-themed project scaffolding — Vite apps with an AI-ready setup baked in")
+  .name("neptr")
+  .description("NEPTR-themed project scaffolding — Vite apps with an AI-ready setup baked in")
   .version(version);
 
 program
@@ -182,24 +182,24 @@ program
   .option("--no-install", "skip npm install")
   .option("-y, --yes", "accept all defaults, no prompts")
   .action(async (name: string | undefined, flags: NewFlags) => {
-    console.log(BMO_BANNER);
-    bmo.say(randomQuote());
+    console.log(NEPTR_BANNER);
+    neptr.say(randomQuote());
     try {
       const partial = configFromFlags(name, flags);
       const config = await runWizard(partial);
       await scaffold(config);
     } catch (err) {
-      bmo.error(err instanceof Error ? err.message : String(err));
+      neptr.error(err instanceof Error ? err.message : String(err));
       process.exit(1);
     }
   });
 
 program
   .command("doctor")
-  .description("Check that your environment has everything BMO needs")
+  .description("Check that your environment has everything NEPTR needs")
   .action(async () => {
-    console.log(BMO_BANNER);
-    bmo.say("I will go into your computer and check it like a magic doctor!\n");
+    console.log(NEPTR_BANNER);
+    neptr.say("I will go into your computer and check it like a magic doctor!\n");
     await doctor();
   });
 
@@ -210,12 +210,12 @@ program
   .option("-n, --name <name>", "short feature name (becomes the folder slug)")
   .option("-y, --yes", "no prompts (requires --name)")
   .action(async (description: string | undefined, flags: FeatureFlags) => {
-    console.log(BMO_BANNER);
-    bmo.say(randomQuote());
+    console.log(NEPTR_BANNER);
+    neptr.say(randomQuote());
     try {
       await runFeature(description, flags);
     } catch (err) {
-      bmo.error(err instanceof Error ? err.message : String(err));
+      neptr.error(err instanceof Error ? err.message : String(err));
       process.exit(1);
     }
   });
@@ -228,12 +228,12 @@ program
   .option("--limit <n>", "max number of skills to fetch and offer (default 20)")
   .option("--include-unverified", "also show skills with audit warnings or no audits yet")
   .action(async (query: string[], flags: SkillFlags) => {
-    console.log(BMO_BANNER);
-    bmo.say(randomQuote());
+    console.log(NEPTR_BANNER);
+    neptr.say(randomQuote());
     try {
       await runSkill(query.join(" "), flags);
     } catch (err) {
-      bmo.error(err instanceof Error ? err.message : String(err));
+      neptr.error(err instanceof Error ? err.message : String(err));
       process.exit(1);
     }
   });

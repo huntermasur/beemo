@@ -38,7 +38,7 @@ export interface AgentChoice {
 export const AGENT_CHOICES: AgentChoice[] = [
   { id: "claude", label: "Claude Code", file: "CLAUDE.md", hint: "Anthropic Claude Code" },
   { id: "copilot", label: "GitHub Copilot", file: ".github/copilot-instructions.md", hint: "VS Code / GitHub Copilot" },
-  { id: "cursor", label: "Cursor", file: ".cursor/rules/bmo.mdc", hint: "Cursor editor" },
+  { id: "cursor", label: "Cursor", file: ".cursor/rules/neptr.mdc", hint: "Cursor editor" },
   { id: "gemini", label: "Gemini CLI", file: "GEMINI.md", hint: "Google Gemini CLI" },
   { id: "codex", label: "OpenAI Codex", file: "AGENTS.md", hint: "uses the shared AGENTS.md" },
   { id: "opencode", label: "opencode", file: "AGENTS.md", hint: "uses the shared AGENTS.md" },
@@ -65,7 +65,7 @@ export const CURATED_SKILLS: SkillChoice[] = [
   { installArg: "mattpocock/skills@grill-me", name: "grill-me", hint: "brutally honest code review" },
 ];
 
-export interface BMOConfig {
+export interface NEPTRConfig {
   projectName: string;
   /** Absolute path of the directory the project is created in. */
   targetDir: string;
@@ -82,7 +82,7 @@ export interface BMOConfig {
   yes: boolean;
 }
 
-/** Raw commander flag values for `bmo new`. */
+/** Raw commander flag values for `neptr new`. */
 export interface NewFlags {
   template?: string;
   mcp?: string;
@@ -128,8 +128,8 @@ function parseList<T extends string>(raw: string | undefined, allowed: readonly 
  * Merge CLI flags over defaults. Returns a partial config; the wizard fills in
  * anything left undefined (or defaults fill it when --yes).
  */
-export function configFromFlags(name: string | undefined, flags: NewFlags): Partial<BMOConfig> {
-  const partial: Partial<BMOConfig> = {};
+export function configFromFlags(name: string | undefined, flags: NewFlags): Partial<NEPTRConfig> {
+  const partial: Partial<NEPTRConfig> = {};
   if (name !== undefined) {
     const err = validateProjectName(name);
     if (err) throw new Error(err);
@@ -164,12 +164,12 @@ export function configFromFlags(name: string | undefined, flags: NewFlags): Part
 }
 
 /** Fill any gaps in a partial config with defaults (used by --yes mode). */
-export function withDefaults(partial: Partial<BMOConfig>): BMOConfig {
-  if (!partial.projectName) throw new Error("Project name is required in --yes mode (bmo new <name> --yes)");
+export function withDefaults(partial: Partial<NEPTRConfig>): NEPTRConfig {
+  if (!partial.projectName) throw new Error("Project name is required in --yes mode (neptr new <name> --yes)");
   const targetDir = path.resolve(process.cwd(), partial.projectName);
   // The interactive wizard checks this too; --yes skips the wizard, so guard here as well.
   if (fs.existsSync(targetDir)) {
-    throw new Error(`Directory ${partial.projectName} already exists here. BMO does not overwrite friends.`);
+    throw new Error(`Directory ${partial.projectName} already exists here. NEPTR does not overwrite friends.`);
   }
   return {
     projectName: partial.projectName,

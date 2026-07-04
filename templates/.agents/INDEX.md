@@ -25,7 +25,7 @@ important files are added, moved, or removed.** Last updated: {{date}}.
 ## Key source files
 
 <!-- As the project grows, link the files an agent will most often need: state stores,
-API clients, routers, shared utilities. Seeded empty by BMO. -->
+API clients, routers, shared utilities. Seeded empty by NEPTR. -->
 
 - _None recorded yet — add entries as the first real features land._
 

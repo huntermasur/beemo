@@ -43,7 +43,7 @@ Last updated: {{date}}.
 ## Key concepts
 
 <!-- As the project grows, list the 5-10 concepts someone must understand to work here,
-each linking to where it lives in code. Seeded empty by BMO. -->
+each linking to where it lives in code. Seeded empty by NEPTR. -->
 
 - _None recorded yet — add the first one when the first real feature lands._
 

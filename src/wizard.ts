@@ -11,7 +11,7 @@ import {
   VITE_TEMPLATES,
   validateProjectName,
   withDefaults,
-  type BMOConfig,
+  type NEPTRConfig,
   type McpServer,
   type ViteTemplate,
 } from "./config.js";
@@ -27,10 +27,10 @@ const MCP_HINTS: Record<McpServer, string> = {
  * Interactive wizard. Anything already provided via flags (in `partial`) is
  * skipped; with --yes every gap is filled from DEFAULTS instead of prompting.
  */
-export async function runWizard(partial: Partial<BMOConfig>): Promise<BMOConfig> {
+export async function runWizard(partial: Partial<NEPTRConfig>): Promise<NEPTRConfig> {
   if (partial.yes) return withDefaults(partial);
 
-  p.intro(pc.bgGreen(pc.black(" bmo new ")));
+  p.intro(pc.bgGreen(pc.black(" neptr new ")));
 
   let projectName = partial.projectName;
   if (!projectName) {
@@ -44,7 +44,7 @@ export async function runWizard(partial: Partial<BMOConfig>): Promise<BMOConfig>
   }
   const targetDir = path.resolve(process.cwd(), projectName);
   if (fs.existsSync(targetDir)) {
-    p.log.error(`Directory ${projectName} already exists here. BMO does not overwrite friends.`);
+    p.log.error(`Directory ${projectName} already exists here. NEPTR does not overwrite friends.`);
     process.exit(1);
   }
 
