@@ -1,17 +1,17 @@
 import fs from "node:fs";
 import path from "node:path";
-import { AGENT_CHOICES, type BeemoConfig } from "../config.js";
+import { AGENT_CHOICES, type BMOConfig } from "../config.js";
 
 /**
  * Shared directive body every agent instruction file gets. `prefix` rewrites the
  * link targets for files that live below the project root (e.g. `../../` for
- * .cursor/rules/beemo.mdc) so the markdown links resolve; labels stay root-relative.
+ * .cursor/rules/bmo.mdc) so the markdown links resolve; labels stay root-relative.
  */
 function agentBody(projectName: string, prefix: string): string {
   const at = (p: string) => `${prefix}${p}`;
   return `# ${projectName} — Agent Instructions
 
-You are working in **${projectName}**, a project scaffolded with Beemo. Before you do
+You are working in **${projectName}**, a project scaffolded with BMO. Before you do
 anything else, read the agent hub. This is mandatory.
 
 ## Required reading — always, no exceptions
@@ -48,7 +48,7 @@ process, including the documentation policy you must apply before finishing.
  * always created. Files that map to the same path (e.g. codex + opencode both use
  * AGENTS.md) are written once.
  */
-export async function agentsStep(config: BeemoConfig): Promise<string> {
+export async function agentsStep(config: BMOConfig): Promise<string> {
   // AGENTS.md is always included, regardless of selection.
   const files = new Set<string>(["AGENTS.md"]);
   for (const id of config.agents) {

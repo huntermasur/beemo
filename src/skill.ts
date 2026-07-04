@@ -62,7 +62,7 @@ async function installSkills(sources: string[], cwd: string): Promise<{ ok: stri
 }
 
 /**
- * `beemo skill <query>` — search skills.sh, keep only well-downloaded skills
+ * `bmo skill <query>` — search skills.sh, keep only well-downloaded skills
  * whose security audits all pass, and let the user pick any number to install
  * into the current project's .agents/skills/ without leaving the editor.
  */
@@ -71,7 +71,7 @@ export async function runSkill(query: string | undefined, flags: SkillFlags): Pr
   const minInstalls = parseCount(flags.minInstalls, DEFAULT_MIN_INSTALLS);
   const limit = parseCount(flags.limit, DEFAULT_LIMIT);
 
-  p.intro(pc.bgGreen(pc.black(" beemo skill ")));
+  p.intro(pc.bgGreen(pc.black(" bmo skill ")));
 
   let term = query?.trim();
   if (!term) {

@@ -4,7 +4,7 @@ Domain knowledge and business rules that agents must respect when working in
 {{projectName}}: the vocabulary, invariants, and constraints that come from the problem
 this project solves rather than from the code itself.
 
-> Seeded empty by Beemo. Fill this in as the domain takes shape. Until then, there are
+> Seeded empty by BMO. Fill this in as the domain takes shape. Until then, there are
 > no project-specific domain rules beyond what the code and
 > [DOMAIN_DOCUMENTATION.md](DOMAIN_DOCUMENTATION.md) already describe.
 

@@ -29,24 +29,24 @@ export function validateFeatureName(name: string): string | undefined {
 }
 
 /**
- * `beemo feature` — scaffold a plan → implement → review workspace at
+ * `bmo feature` — scaffold a plan → implement → review workspace at
  * .agents/features/<slug>/ in the current project, then print the copy-paste
- * prompts that hand each phase to an agent. Beemo never calls an LLM itself.
+ * prompts that hand each phase to an agent. BMO never calls an LLM itself.
  */
 export async function runFeature(description: string | undefined, flags: FeatureFlags): Promise<void> {
   const projectDir = process.cwd();
   const agentsDir = path.join(projectDir, ".agents");
   const featuresDir = path.join(agentsDir, "features");
 
-  p.intro(pc.bgGreen(pc.black(" beemo feature ")));
+  p.intro(pc.bgGreen(pc.black(" bmo feature ")));
 
   // This command runs inside an existing project; .agents/ is the marker that
-  // it was scaffolded by Beemo. Offer to bootstrap just the features folder
+  // it was scaffolded by BMO. Offer to bootstrap just the features folder
   // elsewhere (--yes accepts the default and bootstraps silently).
   if (!fs.existsSync(agentsDir) && !flags.yes) {
     const go = ensure(
       await p.confirm({
-        message: "No .agents/ hub here — this doesn't look like a Beemo project. Create just .agents/features/ and continue?",
+        message: "No .agents/ hub here — this doesn't look like a BMO project. Create just .agents/features/ and continue?",
         initialValue: true,
       }),
     );
@@ -87,7 +87,7 @@ export async function runFeature(description: string | undefined, flags: Feature
   const featureDir = path.join(featuresDir, slug);
   const featurePath = `.agents/features/${slug}`;
   if (fs.existsSync(featureDir)) {
-    p.log.error(`${featurePath} already exists. Beemo does not overwrite friends — pick another name.`);
+    p.log.error(`${featurePath} already exists. BMO does not overwrite friends — pick another name.`);
     process.exit(1);
   }
 
@@ -103,7 +103,7 @@ export async function runFeature(description: string | undefined, flags: Feature
   }
 
   // The shared features README is var-free, so it renders fine even in
-  // projects Beemo never scaffolded.
+  // projects BMO never scaffolded.
   const featuresReadme = path.join(featuresDir, "README.md");
   if (!fs.existsSync(featuresReadme)) {
     renderFile(".agents/features/README.md", featuresReadme, {});

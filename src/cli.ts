@@ -3,7 +3,7 @@ import { Command } from "commander";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { BMO_BANNER, bmo, randomQuote } from "./theme.js";
-import { configFromFlags, type BeemoConfig, type NewFlags } from "./config.js";
+import { configFromFlags, type BMOConfig, type NewFlags } from "./config.js";
 import { runWizard } from "./wizard.js";
 import type { StepResult } from "./run.js";
 import { viteStep } from "./steps/vite.js";
@@ -23,10 +23,10 @@ import { runSkill, type SkillFlags } from "./skill.js";
 
 interface Step {
   name: string;
-  enabled: (c: BeemoConfig) => boolean;
-  run: (c: BeemoConfig) => Promise<string | void>;
+  enabled: (c: BMOConfig) => boolean;
+  run: (c: BMOConfig) => Promise<string | void>;
   /** Manual command shown in the summary if this step fails. */
-  fix: (c: BeemoConfig) => string;
+  fix: (c: BMOConfig) => string;
   /** When true, a failure aborts the scaffold (nothing to layer onto). */
   critical?: boolean;
 }
@@ -43,7 +43,7 @@ const STEPS: Step[] = [
     name: "Generate AI & docs layer",
     enabled: () => true,
     run: aiDocsStep,
-    fix: () => "copy templates/.agents and templates/docs from the beemo repo into the project",
+    fix: () => "copy templates/.agents and templates/docs from the bmo repo into the project",
   },
   {
     name: "Generate agent instruction files",
@@ -61,7 +61,7 @@ const STEPS: Step[] = [
     name: "Generate Docker setup",
     enabled: (c) => c.docker,
     run: dockerStep,
-    fix: () => "copy templates/docker/* from the beemo repo",
+    fix: () => "copy templates/docker/* from the bmo repo",
   },
   {
     name: "Install dependencies",
@@ -95,7 +95,7 @@ const STEPS: Step[] = [
   },
 ];
 
-async function scaffold(config: BeemoConfig): Promise<void> {
+async function scaffold(config: BMOConfig): Promise<void> {
   const results: StepResult[] = [];
   const spinner = p.spinner();
 
@@ -164,7 +164,7 @@ const { version } = createRequire(import.meta.url)("../package.json") as { versi
 const program = new Command();
 
 program
-  .name("beemo")
+  .name("bmo")
   .description("BMO-themed project scaffolding — Vite apps with an AI-ready setup baked in")
   .version(version);
 
@@ -196,7 +196,7 @@ program
 
 program
   .command("doctor")
-  .description("Check that your environment has everything Beemo needs")
+  .description("Check that your environment has everything BMO needs")
   .action(async () => {
     console.log(BMO_BANNER);
     bmo.say("I will go into your computer and check it like a magic doctor!\n");

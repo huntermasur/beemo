@@ -1,6 +1,6 @@
 # Plan — {{featureName}}
 
-Created {{date}} by `beemo feature`. Current phase lives in [STATUS.md](STATUS.md).
+Created {{date}} by `bmo feature`. Current phase lives in [STATUS.md](STATUS.md).
 
 ## Feature description (from the user)
 

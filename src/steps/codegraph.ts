@@ -1,5 +1,5 @@
 import { commandExists, run } from "../run.js";
-import type { BeemoConfig } from "../config.js";
+import type { BMOConfig } from "../config.js";
 
 /**
  * Build the project's codegraph index. Installs the codegraph CLI globally
@@ -7,7 +7,7 @@ import type { BeemoConfig } from "../config.js";
  * the consent for that). Project-level MCP wiring is handled by .mcp.json,
  * so `codegraph install` is not needed here.
  */
-export async function codegraphStep(config: BeemoConfig): Promise<string | void> {
+export async function codegraphStep(config: BMOConfig): Promise<string | void> {
   let installedNow = false;
   if (!(await commandExists("codegraph"))) {
     await run("npm", ["install", "-g", "@colbymchenry/codegraph"], {

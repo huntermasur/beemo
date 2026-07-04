@@ -1,6 +1,6 @@
 # {{projectName}}
 
-{{stack}} app scaffolded with [Beemo](https://github.com/huntermasur/beemo) on {{date}}.
+{{stack}} app scaffolded with [BMO](https://github.com/huntermasur/bmo) on {{date}}.
 
 ## Getting started
 

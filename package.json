@@ -1,10 +1,10 @@
 {
-  "name": "beemo-cli",
+  "name": "bmo-cli",
   "version": "0.1.0",
   "description": "BMO-themed project scaffolding CLI — Vite projects with an AI-ready setup baked in",
   "type": "module",
   "bin": {
-    "beemo": "dist/cli.js"
+    "bmo": "dist/cli.js"
   },
   "files": [
     "dist",
@@ -12,11 +12,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/huntermasur/beemo.git"
+    "url": "git+https://github.com/huntermasur/bmo.git"
   },
-  "homepage": "https://github.com/huntermasur/beemo#readme",
+  "homepage": "https://github.com/huntermasur/bmo#readme",
   "bugs": {
-    "url": "https://github.com/huntermasur/beemo/issues"
+    "url": "https://github.com/huntermasur/bmo/issues"
   },
   "engines": {
     "node": ">=20"

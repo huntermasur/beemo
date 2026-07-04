@@ -17,7 +17,7 @@ export const BMO_BANNER = pc.cyan(`
 export const QUOTES = [
   "Who wants to play video games?",
   "I will go into your project and fix it like a magic doctor!",
-  "Beemo chop!",
+  "BMO chop!",
   "Let's make something rad together!",
   "I am not just a machine... I am a real living boy building your project!",
 ];

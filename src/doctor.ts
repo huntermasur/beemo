@@ -55,7 +55,7 @@ const CHECKS: Check[] = [
     required: false,
     run: async () => {
       const found = await commandExists("codegraph");
-      return { ok: found, detail: found ? "installed" : "not installed (Beemo can install it during scaffold)" };
+      return { ok: found, detail: found ? "installed" : "not installed (BMO can install it during scaffold)" };
     },
   },
   {
@@ -82,7 +82,7 @@ export async function doctor(): Promise<void> {
   }
   console.log();
   if (requiredFailures) {
-    bmo.error(`${requiredFailures} required check(s) failed — fix those before running beemo new.`);
+    bmo.error(`${requiredFailures} required check(s) failed — fix those before running bmo new.`);
     process.exitCode = 1;
   } else {
     bmo.success("Everything checks out. Who wants to scaffold a project?");

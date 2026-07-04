@@ -52,12 +52,12 @@ describe("withDefaults", () => {
   });
 
   it("fills every gap from DEFAULTS", () => {
-    const config = withDefaults({ projectName: "zz-beemo-test-nonexistent", yes: true });
+    const config = withDefaults({ projectName: "zz-bmo-test-nonexistent", yes: true });
     expect(config.template).toBe(DEFAULTS.template);
     expect(config.mcpServers).toEqual(DEFAULTS.mcpServers);
     expect(config.agents).toEqual(DEFAULTS.agents);
     expect(config.docker).toBe(DEFAULTS.docker);
-    expect(config.targetDir.endsWith("zz-beemo-test-nonexistent")).toBe(true);
+    expect(config.targetDir.endsWith("zz-bmo-test-nonexistent")).toBe(true);
   });
 
   it("refuses to target an existing directory", () => {

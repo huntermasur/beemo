@@ -1,6 +1,6 @@
-# Beemo CLI — Agent Instructions
+# BMO CLI — Agent Instructions
 
-Beemo is a BMO (Adventure Time)-themed CLI that scaffolds new Vite projects with an
+BMO is a BMO (Adventure Time)-themed CLI that scaffolds new Vite projects with an
 AI-ready setup: a `.agents/` hub (constitution, AI instructions, knowledge map, file
 index, plus a `skills/` folder for installed skills), a docs tree
 (COMMANDS.md, an `architecture/` folder with ARCHITECTURE.md + ADRs, a `domain/` folder
@@ -11,18 +11,18 @@ skills.sh skills, codegraph indexing, and Docker.
 ## Commands
 - `npm run build` — bundle `src/cli.ts` to `dist/cli.js` via tsup
 - `npm run typecheck` — tsc --noEmit (run before committing)
-- `npm link` — make the `beemo` command available globally for testing
+- `npm link` — make the `bmo` command available globally for testing
 - Test scaffolds go in a throwaway directory (scratchpad), never inside this repo
 
 ## Architecture
 - `src/cli.ts` — commander entry point; subcommands: `new`, `doctor`, `feature`
 - `src/theme.ts` — BMO ASCII art, palette, quotes; all user-facing output goes through this
-- `src/wizard.ts` — @clack/prompts flow producing a `BeemoConfig`
+- `src/wizard.ts` — @clack/prompts flow producing a `BMOConfig`
 - `src/prompts.ts` — shared clack helpers (`bail`, `ensure` cancel handling)
-- `src/feature.ts` — `beemo feature`: scaffolds a plan → implement → review workspace
+- `src/feature.ts` — `bmo feature`: scaffolds a plan → implement → review workspace
   at `.agents/features/<slug>/` in the current project (from `templates/feature/`)
   and prints per-phase copy-paste agent prompts; never calls an LLM itself
-- `src/config.ts` — `BeemoConfig` type, flag merging, `--yes` defaults
+- `src/config.ts` — `BMOConfig` type, flag merging, `--yes` defaults
 - `src/template.ts` — copies `templates/` trees, replacing `{{var}}` placeholders
 - `src/run.ts` — execa wrapper with themed spinners
 - `src/steps/*.ts` — one module per scaffold step, each exporting `run(config)`

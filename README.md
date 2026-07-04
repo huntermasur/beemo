@@ -1,8 +1,8 @@
-# Beemo 🎮
+# BMO 🎮
 
 > "Who wants to play video games?"
 
-Beemo is a BMO-themed CLI for starting new projects the right way. It scaffolds a
+BMO is a BMO-themed CLI for starting new projects the right way. It scaffolds a
 [Vite](https://vitejs.dev) app, then layers on a complete AI-ready setup so every
 project begins with the same file structure and the same default behavior for AI
 coding agents.
@@ -28,18 +28,18 @@ coding agents.
 ```bash
 npm install
 npm run build
-npm link        # makes `beemo` available globally
+npm link        # makes `bmo` available globally
 
-beemo new my-app          # interactive BMO wizard
-beemo new my-app --yes    # accept all defaults
-beemo doctor              # check your environment
-beemo feature             # start a plan → implement → review feature workspace
-beemo skill web design    # find & install security-checked skills from skills.sh
+bmo new my-app          # interactive BMO wizard
+bmo new my-app --yes    # accept all defaults
+bmo doctor              # check your environment
+bmo feature             # start a plan → implement → review feature workspace
+bmo skill web design    # find & install security-checked skills from skills.sh
 ```
 
 ## Installing skills
 
-Inside a project, `beemo skill <search terms>` searches [skills.sh](https://skills.sh),
+Inside a project, `bmo skill <search terms>` searches [skills.sh](https://skills.sh),
 keeps only skills with a healthy install count (`--min-installs`, default 1000)
 whose security audits **all pass**, and lets you pick any number to install into
 `.agents/skills/` without leaving your editor. Pass `--include-unverified` to also
@@ -47,7 +47,7 @@ see skills with audit warnings or no audits yet (their status is shown inline).
 
 ## Feature workflow
 
-Inside a project, `beemo feature` breaks a feature into three agent-driven phases
+Inside a project, `bmo feature` breaks a feature into three agent-driven phases
 so you can use a smart (expensive) model to plan and review while a cheaper model
 does the coding. It asks for a name and description, scaffolds
 `.agents/features/<slug>/` (plan, task list, status, notes, and per-phase agent

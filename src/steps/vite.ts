@@ -1,10 +1,10 @@
 import path from "node:path";
 import fs from "node:fs";
 import { run } from "../run.js";
-import type { BeemoConfig } from "../config.js";
+import type { BMOConfig } from "../config.js";
 
 /** Scaffold the base app with the official Vite scaffolder. */
-export async function viteStep(config: BeemoConfig): Promise<void> {
+export async function viteStep(config: BMOConfig): Promise<void> {
   const parent = path.dirname(config.targetDir);
   await run(
     "npm",

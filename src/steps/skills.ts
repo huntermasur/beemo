@@ -1,12 +1,12 @@
 import { run } from "../run.js";
-import type { BeemoConfig } from "../config.js";
+import type { BMOConfig } from "../config.js";
 
 /**
  * Install each selected skills.sh skill via `npx skills add`. Failures are
  * collected per skill so one bad repo doesn't block the rest. Only runs when at
  * least one skill is selected (gated by `enabled` in cli.ts).
  */
-export async function skillsStep(config: BeemoConfig): Promise<string> {
+export async function skillsStep(config: BMOConfig): Promise<string> {
   const failed: string[] = [];
   for (const skill of config.skills) {
     try {

@@ -9,4 +9,4 @@ Status: created
 
 | Date | Status | Note |
 | --- | --- | --- |
-| {{date}} | created | Workspace scaffolded by `beemo feature` |
+| {{date}} | created | Workspace scaffolded by `bmo feature` |

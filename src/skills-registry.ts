@@ -1,5 +1,5 @@
 /**
- * Thin client for the public skills.sh surface, used by `beemo skill`.
+ * Thin client for the public skills.sh surface, used by `bmo skill`.
  *
  * The documented `/api/v1/*` endpoints require a Vercel OIDC token that a local
  * CLI does not have, so we use the two surfaces that are reachable without auth:
@@ -51,7 +51,7 @@ async function fetchText(url: string, fetchImpl: FetchLike, timeoutMs = 15_000):
   try {
     const res = await fetchImpl(url, {
       signal: controller.signal,
-      headers: { "user-agent": "beemo-cli", accept: "application/json, text/html" },
+      headers: { "user-agent": "bmo-cli", accept: "application/json, text/html" },
     });
     return { status: res.status, text: await res.text() };
   } finally {
@@ -83,7 +83,7 @@ export async function searchSkills(query: string, limit: number, fetchImpl: Fetc
   try {
     parsed = JSON.parse(text) as { skills?: SkillSearchResult[] };
   } catch {
-    throw new Error("skills.sh search returned a response Beemo could not read");
+    throw new Error("skills.sh search returned a response BMO could not read");
   }
   const skills = Array.isArray(parsed.skills) ? parsed.skills : [];
   return skills.filter((s) => s && typeof s.id === "string" && typeof s.installs === "number").slice(0, Math.max(0, limit));
