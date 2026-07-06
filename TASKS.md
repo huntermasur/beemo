@@ -76,7 +76,7 @@ Full plan context lives in the project README and CLAUDE.md.
       so generated `docs/COMMANDS.md` links resolve
 - [x] Verified: scaffold + `neptr feature` end to end in a scratchpad project
 
-## M10 — `neptr mcp` (security-checked MCP servers from skillful.sh)
+## M10 — `neptr mcp` (security-checked MCP servers) — original skillful.sh version, superseded by M12
 - [x] `src/mcp-registry.ts` — skillful.sh REST client: `/api/v1/items?type=mcp_server`
       search + `/api/v1/items/:slug` security-score lookup, grade→verdict mapping,
       npm→`npx -y` / PyPI→`uvx` launch-config derivation (browser-like UA to clear the WAF)
@@ -95,6 +95,19 @@ Full plan context lives in the project README and CLAUDE.md.
       (now the single guide) and repointed every reference (agents.ts, constitution, README)
 - [x] `neptr feature` now writes to `.docs/feature/<slug>/` (`src/feature.ts`, `src/cli.ts`)
 - [ ] Verified: scaffold a demo + `neptr feature` end to end in a scratchpad project
+
+## M12 — `neptr mcp` re-sourced to the official MCP registry + feature-phase discovery
+- [x] `src/mcp-registry.ts` rewritten as a client for `registry.modelcontextprotocol.io`
+      (`/v0/servers` search) + a transparent verifier: verified-vendor namespace,
+      GitHub repo activity/issues (with `GITHUB_TOKEN` support, degrading to unknown),
+      broad-access keyword scan, local/Docker runnability, version pinning → safe/caution/avoid
+- [x] `src/mcp.ts` — verdict-based filtering (default `safe`, `--include-unverified` shows
+      caution/avoid), per-server checklist, **version-pinned** `.mcp.json` entries, secret flagging;
+      dropped `--min-grade` (updated `src/cli.ts` help)
+- [x] `neptr feature` phases discover/install MCP servers: `phases/plan.md` +
+      `PLAN.md` "Recommended MCP servers" section; `phases/implement.md` install step
+- [x] `test/mcp-registry.test.ts` rewritten for the new client + verifier
+- [ ] Verified: live `--search-only` + `--yes` install writes a valid, version-pinned `.mcp.json`
 
 ## Backlog (future ideas)
 - [ ] `neptr add <feature>` — retrofit docs/docker/mcp/skills onto an existing project

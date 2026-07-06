@@ -23,10 +23,19 @@ without guessing.
    it installs nothing. Record the ones worth using in the **Recommended skills**
    section of [../PLAN.md](../PLAN.md), each with the exact `neptr skill "…" --yes`
    command the implementer should run. If nothing fits, write "None needed."
-6. Rewrite [../TASKS.md](../TASKS.md) as an ordered checklist. Each task must be
+6. Look for helpful MCP servers the same way. For each external system the feature
+   talks to (a database, a browser, GitHub, a SaaS API, the filesystem…), run
+   `neptr mcp "<keywords>" --search-only` from the project root. This searches the
+   official MCP registry and lists each server with a safety checklist (verified
+   vendor, repo activity, access surface, local/Docker runnability, version
+   pinning) — it installs nothing. Record the servers worth using in the
+   **Recommended MCP servers** section of [../PLAN.md](../PLAN.md), each with the
+   exact `neptr mcp "…" --yes` command the implementer should run. Prefer servers
+   marked `safe`. If nothing fits, write "None needed."
+7. Rewrite [../TASKS.md](../TASKS.md) as an ordered checklist. Each task must be
    small, concrete, and independently verifiable, with enough detail that the
-   implementer never has to re-derive the approach. Include an early task to
-   install the recommended skills (if any).
+   implementer never has to re-derive the approach. Include early tasks to
+   install the recommended skills and MCP servers (if any).
 
 ## Rules
 

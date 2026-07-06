@@ -24,15 +24,24 @@ Docker.
 - `src/feature.ts` — `neptr feature`: scaffolds a plan → implement → review workspace
   at `.docs/feature/<slug>/` in the current project (from `templates/feature/`)
   and prints per-phase copy-paste agent prompts; never calls an LLM itself. The plan
-  phase discovers reusable skills with `neptr skill --search-only`; the implement
-  phase installs them with `neptr skill --yes` (both defined in `src/skill.ts`).
+  phase discovers reusable skills and MCP servers with `neptr skill --search-only`
+  and `neptr mcp --search-only`; the implement phase installs them with
+  `neptr skill --yes` / `neptr mcp --yes`. This discovery/install behavior lives in
+  the phase templates (`templates/feature/phases/*.md`), not in `feature.ts`.
 - `src/skill.ts` / `src/skills-registry.ts` — `neptr skill`: searches skills.sh,
   filters to popular skills whose security audits all pass, and installs the
   selected ones into `.agents/skills/` via `npx skills add`.
-- `src/mcp.ts` / `src/mcp-registry.ts` — `neptr mcp`: searches skillful.sh's public
-  JSON API for MCP servers, filters by security grade (`--min-grade`, default A),
-  and merges the selected ones into the project's `.mcp.json` (npm → `npx -y`,
-  PyPI → `uvx`). Mirrors `neptr skill`'s `--search-only`/`--yes` planning modes.
+- `src/mcp.ts` / `src/mcp-registry.ts` — `neptr mcp`: searches the official MCP
+  registry (`registry.modelcontextprotocol.io/v0/servers` — the upstream GitHub's
+  MCP registry mirrors), then runs its own transparent safety check per server
+  (verified-vendor namespace, GitHub repo activity/issues, broad-access keyword
+  scan, local/Docker runnability, version pinning) yielding a safe/caution/avoid
+  verdict. Merges selected safe servers into **both** `.mcp.json` (Claude) and
+  `.cursor/mcp.json` (Cursor) — the paths in `MCP_CONFIG_FILES` (config.ts), kept
+  in sync so either editor sees the same servers — **version-pinned**
+  (npm → `npx -y <pkg>@<ver>`, PyPI → `uvx <pkg>@<ver>`, OCI → `docker run`).
+  Mirrors `neptr skill`'s `--search-only`/`--yes` planning modes; honors
+  `GITHUB_TOKEN` to raise the GitHub API rate limit, degrading to "unknown" on failure.
 - `src/config.ts` — `NEPTRConfig` type, flag merging, `--yes` defaults
 - `src/template.ts` — copies `templates/` trees, replacing `{{var}}` placeholders
 - `src/run.ts` — execa wrapper with themed spinners

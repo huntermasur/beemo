@@ -15,7 +15,16 @@ The plan phase already made the decisions — your job is to execute it faithful
    Note which skills installed in [../NOTES.md](../NOTES.md), then re-read your
    `.agents/skills/` so the new guidance is in context. Skip this step if the plan
    says "None needed."
-4. Set the status line to `Status: implementing` and append a log row.
+4. Install the MCP servers the plan recommends. For each command in the
+   **Recommended MCP servers** section of [../PLAN.md](../PLAN.md), run it from the
+   project root (they look like `neptr mcp "…" --yes`). `neptr mcp` re-runs the
+   safety check and adds only servers marked safe (version-pinned) to both
+   `.mcp.json` (for Claude) and `.cursor/mcp.json` (for Cursor), so anything unsafe
+   is skipped automatically. Any server that declares credentials/environment
+   variables needs them filled in by hand — note those and which servers installed
+   in [../NOTES.md](../NOTES.md), then restart your agent so it picks up the new MCP
+   config. Skip this step if the plan says "None needed."
+5. Set the status line to `Status: implementing` and append a log row.
 
 ## While implementing
 

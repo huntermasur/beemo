@@ -26,6 +26,14 @@ export type ViteTemplate = (typeof VITE_TEMPLATES)[number];
 export const MCP_SERVERS = ["playwright", "context7", "github"] as const;
 export type McpServer = (typeof MCP_SERVERS)[number];
 
+/**
+ * Files that hold the project's MCP server config, kept in sync so both editors
+ * see the same servers: `.mcp.json` (project root) is read by Claude Code and
+ * other AGENTS.md-era tools; `.cursor/mcp.json` is read by Cursor. Paths are
+ * project-root-relative and use `/` (path.join normalizes them on Windows).
+ */
+export const MCP_CONFIG_FILES = [".mcp.json", ".cursor/mcp.json"] as const;
+
 /** AI agents that can be wired up. Each maps to a root instruction file. */
 export interface AgentChoice {
   id: string;

@@ -34,6 +34,17 @@ _Not planned yet — the plan phase fills in everything below._
 | Skill | Why | Install command |
 | --- | --- | --- |
 
+## Recommended MCP servers
+
+<!-- Planning agent: MCP servers from the official registry that fit the approach,
+     found with `neptr mcp "<keywords>" --search-only`. Prefer servers marked
+     `safe`. The implementer runs each command below in the implement phase;
+     neptr mcp re-runs the safety check and adds only safe servers. Write
+     "None needed." if nothing fits. -->
+
+| Server | Why | Install command |
+| --- | --- | --- |
+
 ## Risks & open questions
 
 <!-- Anything to confirm with the user before or during implementation. -->

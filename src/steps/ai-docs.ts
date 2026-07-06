@@ -26,7 +26,10 @@ export function templateVars(config: NEPTRConfig): TemplateVars {
 
   const toolingLines: string[] = [];
   if (config.mcpServers.length) {
-    toolingLines.push(`- **MCP servers** (configured in \`.mcp.json\`): ${config.mcpServers.join(", ")}.`);
+    toolingLines.push(
+      `- **MCP servers** (configured in \`.mcp.json\` for Claude and \`.cursor/mcp.json\` for Cursor — ` +
+        `keep both in sync): ${config.mcpServers.join(", ")}.`,
+    );
   }
   if (config.skills.length) {
     toolingLines.push(`- **Skills** installed from skills.sh: ${config.skills.join(", ")}.`);
@@ -58,7 +61,9 @@ export function templateVars(config: NEPTRConfig): TemplateVars {
       : "",
     extraIndexRows: [
       ...(config.mcpServers.length
-        ? [`| [../.mcp.json](../.mcp.json) | MCP server configuration (${config.mcpServers.join(", ")}) |`]
+        ? [
+            `| [../.mcp.json](../.mcp.json), [../.cursor/mcp.json](../.cursor/mcp.json) | MCP server configuration for Claude and Cursor (${config.mcpServers.join(", ")}) |`,
+          ]
         : []),
       ...(config.docker
         ? ["| [../Dockerfile](../Dockerfile), [../docker-compose.yml](../docker-compose.yml) | Container setup for dev and prod |"]
@@ -71,7 +76,7 @@ export function templateVars(config: NEPTRConfig): TemplateVars {
       ? "\n# with Docker\ndocker compose up dev          # dev server with HMR\ndocker compose up prod         # production build behind nginx\n"
       : "",
     aiExtras: config.mcpServers.length
-      ? `\nConfigured MCP servers: ${config.mcpServers.join(", ")} (see [.mcp.json](.mcp.json)).`
+      ? `\nConfigured MCP servers: ${config.mcpServers.join(", ")} (see [.mcp.json](.mcp.json) for Claude and [.cursor/mcp.json](.cursor/mcp.json) for Cursor — keep both in sync).`
       : "",
   };
 }

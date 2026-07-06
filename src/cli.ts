@@ -62,7 +62,7 @@ const STEPS: Step[] = [
     name: "Configure MCP servers",
     enabled: (c) => c.mcpServers.length > 0,
     run: mcpStep,
-    fix: () => "create .mcp.json by hand (see https://docs.claude.com/en/docs/claude-code/mcp)",
+    fix: () => "create .mcp.json and .cursor/mcp.json by hand (see https://docs.claude.com/en/docs/claude-code/mcp)",
   },
   {
     name: "Generate Docker setup",
@@ -247,12 +247,11 @@ program
 program
   .command("mcp")
   .argument("[query...]", "what kind of MCP server to search for")
-  .description("Search skillful.sh for security-checked MCP servers and add them to this project's .mcp.json")
+  .description("Search the official MCP registry for safety-checked servers and add them to this project's .mcp.json and .cursor/mcp.json")
   .option("--limit <n>", "max number of servers to fetch and offer (default 12)")
-  .option("--min-grade <grade>", "minimum security grade to consider passing: A+, A, B, C, D, F (default A)")
-  .option("--include-unverified", "also show servers that are unscanned or below the grade bar")
-  .option("--search-only", "list matching security-checked servers without installing (for planning)")
-  .option("-y, --yes", "add every shown (grade-passing) server without prompting")
+  .option("--include-unverified", "also show servers with a caution/avoid verdict, not just safe ones")
+  .option("--search-only", "list matching safety-checked servers without installing (for planning)")
+  .option("-y, --yes", "add every shown (safe) server without prompting")
   .action(async (query: string[], flags: McpFlags) => {
     console.log(NEPTR_BANNER);
     neptr.say(randomQuote());

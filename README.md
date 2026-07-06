@@ -17,7 +17,7 @@ coding agents.
 - **`.docs/` tree** — `environment.md` (how to run the project), `module-map.md` (where
   each component type lives), an `architecture/` folder (architecture doc, specs, ADRs), a
   `feature/` folder for `neptr feature` workspaces, and a `documents/` folder for user documents
-- **MCP config** (`.mcp.json`) — playwright, context7, github (your pick)
+- **MCP config** (`.mcp.json` for Claude + `.cursor/mcp.json` for Cursor, kept in sync) — playwright, context7, github (your pick)
 - **Skills** — checklist of top [skills.sh](https://skills.sh) skills
 - **Docker** — multi-stage Dockerfile + compose for dev and prod
 - **Git** — init, .gitignore, initial commit, dependencies installed
@@ -34,7 +34,7 @@ neptr new my-app --yes    # accept all defaults
 neptr doctor              # check your environment
 neptr feature             # start a plan → implement → review feature workspace
 neptr skill web design    # find & install security-checked skills from skills.sh
-neptr mcp postgres        # find & install security-checked MCP servers from skillful.sh
+neptr mcp postgres        # find & install safety-checked MCP servers from the MCP registry
 ```
 
 ## Installing skills
@@ -52,18 +52,29 @@ implement phase to add the skills the plan recommended).
 
 ## Installing MCP servers
 
-Inside a project, `neptr mcp <search terms>` searches [skillful.sh](https://skillful.sh)
-for MCP servers, keeps only those whose security grade clears the bar
-(`--min-grade`, default `A`), and lets you pick any number to add to the
-project's `.mcp.json` without leaving your editor. npm packages are wired up as
-`npx -y <package>` and PyPI packages as `uvx <package>`; existing `.mcp.json`
-entries are preserved. Pass `--include-unverified` to also see servers that are
-unscanned or below the grade bar (their grade is shown inline).
+Inside a project, `neptr mcp <search terms>` searches the [official MCP
+registry](https://registry.modelcontextprotocol.io) (the upstream that GitHub's
+MCP registry mirrors) and runs its own safety check on each server, showing a
+transparent checklist: verified vendor (via the registry's DNS-verified
+namespace), repo activity and issue backlog (from the GitHub API — set
+`GITHUB_TOKEN` to raise the rate limit), broad-access surface, local/Docker
+runnability, and version pinning. Each server gets a **safe / caution / avoid**
+verdict; by default only `safe` servers are shown. Pass `--include-unverified` to
+also see `caution`/`avoid` servers with their checklists.
 
-As with `neptr skill`, `--search-only` lists the grade-passing matches without
-installing (for the plan phase) and `--yes` adds every shown server without
-prompting (for the implement phase). Servers that aren't npm or PyPI packages
-can't be auto-wired — NEPTR lists their repos so you can configure them by hand.
+Pick any number to add to the project's MCP config without leaving your editor.
+Servers are written to **both** `.mcp.json` (read by Claude Code and other
+AGENTS.md-era tools) and `.cursor/mcp.json` (read by Cursor), kept in sync so
+either editor sees the same servers — always **version-pinned** (npm → `npx -y
+<pkg>@<version>`, PyPI → `uvx <pkg>@<version>`, OCI → `docker run`). Existing
+entries in either file are preserved, and servers that declare credentials are
+flagged so you can fill them in by hand.
+
+As with `neptr skill`, `--search-only` lists the safety-checked matches without
+installing (for the plan phase) and `--yes` adds every shown safe server without
+prompting (for the implement phase). Remote-only servers with no local package
+are wired to their hosted endpoint; anything with no launch command is listed so
+you can configure it by hand.
 
 ## Feature workflow
 
