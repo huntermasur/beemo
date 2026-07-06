@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { adoptPhasePrompts, featurePhasePrompts, phasePromptVars } from "../src/phase-prompts.js";
+import { adoptPhasePrompts, featurePhasePrompts, MODEL_MENU, phasePromptVars } from "../src/phase-prompts.js";
 import { renderString, TEMPLATES_DIR } from "../src/template.js";
 
 const FEATURE_PATH = ".docs/feature/test-slug";
@@ -62,6 +62,23 @@ describe("PROMPTS.md templates", () => {
     expect(rendered).toContain("<!-- neptr:implement-prompts:end -->");
     for (const phase of fn(FEATURE_PATH)) {
       expect(rendered).toContain(phase.prompt);
+      // Every prompt carries an editable Model line the plan phase fills in.
+      expect(rendered).toContain(`**Model:** ${phase.modelHint}`);
     }
+  });
+});
+
+describe("plan.md model guide", () => {
+  it.each([
+    ["feature/phases/plan.md"],
+    ["adopt/phases/plan.md"],
+  ])("%s renders the shared model menu with no leftover placeholders", (rel) => {
+    const template = fs.readFileSync(path.join(TEMPLATES_DIR, rel), "utf8");
+    const rendered = renderString(template, {
+      featurePath: FEATURE_PATH,
+      modelMenu: MODEL_MENU,
+    });
+    expect(rendered).toContain(MODEL_MENU);
+    expect(rendered).not.toContain("{{modelMenu}}");
   });
 });

@@ -2,7 +2,14 @@
 
 You are the planning agent for the feature workspace at `{{featurePath}}/`. Your
 job is to produce a plan good enough that a less capable model can implement it
-without guessing.
+without guessing — and to recommend, per prompt, which model should run it.
+
+## Model guide
+
+You size every downstream prompt to its complexity and record the pick on its
+`**Model:**` line in [../PROMPTS.md](../PROMPTS.md). Choose from this menu:
+
+{{modelMenu}}
 
 ## Steps
 
@@ -40,8 +47,10 @@ without guessing.
    holds: TASKS.md has more than ~12 tasks; the tasks span 3+ unrelated areas of
    the codebase; or an implementer would need more files in context than fits
    one session (roughly 15+ files to read or change). If it fits one session,
-   do NOT split — leave TASKS.md flat, leave [../PROMPTS.md](../PROMPTS.md)
-   untouched, and skip the rest of this step. If splitting:
+   do NOT split — leave TASKS.md flat and leave the block between the
+   `<!-- neptr:implement-prompts:start/end -->` markers in
+   [../PROMPTS.md](../PROMPTS.md) as one prompt (you still set its `**Model:**`
+   line in step 9). If splitting:
    - Regroup TASKS.md under `## Milestone 1 — <name>`, `## Milestone 2 — <name>`,
      … headings, in dependency order. Aim for 2–5 milestones, each sized to one
      agent session. Every milestone must leave the project green (typecheck/
@@ -49,11 +58,21 @@ without guessing.
    - In [../PROMPTS.md](../PROMPTS.md), replace everything **between**
      `<!-- neptr:implement-prompts:start -->` and
      `<!-- neptr:implement-prompts:end -->` (keep the marker lines) with one
-     prompt per milestone, each under a `### Milestone N — <name>` heading,
-     using exactly this template:
+     block per milestone. Each block is a `### Milestone N — <name>` heading,
+     then a `**Model:** <pick from the Model guide> — <≤6-word reason>` line
+     (sized per step 9), then this exact prompt:
      `Read {{featurePath}}/phases/implement.md and follow it exactly, scoped to Milestone N (<name>) only: implement that milestone's tasks per {{featurePath}}/PLAN.md, checking off TASKS.md and updating NOTES.md and STATUS.md as you go. Do not start other milestones.`
    - Do not add per-milestone review prompts — there is one plan phase and one
      final review phase.
+9. **Recommend a model for every prompt.** Using the Model guide above, set the
+   `**Model:**` line on each prompt in [../PROMPTS.md](../PROMPTS.md) to the model
+   that fits its complexity, with a short reason (≤6 words):
+   - Implement: one line per milestone (set in step 8), or the single implement
+     prompt's line if you did not split — a mechanical milestone can drop to Low,
+     an intricate one rise to High.
+   - Review: usually High, but lower it if the change is small and self-contained.
+   - Leave the Plan line as is — that prompt has already run.
+   Give the Claude Code model name; the reader maps it to their editor via the guide.
 
 ## Rules
 

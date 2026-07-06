@@ -4,20 +4,30 @@ Copy-paste prompts for the workspace at `{{featurePath}}/`, saved by
 `neptr feature` so they survive a closed terminal. Paste each one into a fresh
 agent session, in order.
 
-## {{planTitle}} — {{planModelHint}}
+The **Model** line on each prompt is the plan phase's recommendation, sized to the
+task's complexity — run that prompt with that model (or the equivalent in your editor).
+
+## {{planTitle}}
+
+**Model:** {{planModelHint}}
 
 {{planPrompt}}
 
-## {{implementTitle}} — {{implementModelHint}}
+## {{implementTitle}}
 
 <!-- neptr:implement-prompts:start -->
+**Model:** {{implementModelHint}}
+
 {{implementPrompt}}
 <!-- neptr:implement-prompts:end -->
 
-> If the plan phase split TASKS.md into milestones, it replaces the prompt
-> between the markers above with one prompt per milestone. Run them in order,
-> each in a fresh agent session.
+> If the plan phase split TASKS.md into milestones, it replaces the block
+> between the markers above with one **Model:** line + prompt per milestone,
+> each model sized to that milestone. Run them in order, each in a fresh agent
+> session.
 
-## {{reviewTitle}} — {{reviewModelHint}}
+## {{reviewTitle}}
+
+**Model:** {{reviewModelHint}}
 
 {{reviewPrompt}}

@@ -2,8 +2,16 @@
 
 You are the planning agent for the adoption workspace at `{{featurePath}}/`. Your
 job is to turn the auto-generated inventories into a precise migration plan that
-a less capable model can execute without breaking the build. The plan covers four
-workstreams, in this order: **code, tests, docs, docker**.
+a less capable model can execute without breaking the build, and to recommend, per
+prompt, which model should run it. The plan covers four workstreams, in this order:
+**code, tests, docs, docker**.
+
+## Model guide
+
+You size every downstream prompt to its complexity and record the pick on its
+`**Model:**` line in [../PROMPTS.md](../PROMPTS.md). Choose from this menu:
+
+{{modelMenu}}
 
 ## Steps
 
@@ -50,8 +58,10 @@ workstreams, in this order: **code, tests, docs, docker**.
     (code → tests → docs → docker), splitting the code workstream into several
     milestones when the inventory has more than ~20 files to move. Only skip
     milestones when the whole migration is small (under ~12 tasks) — then leave
-    TASKS.md's workstream grouping as is and [../PROMPTS.md](../PROMPTS.md)
-    untouched. Milestones must be ordered so the project stays green after each
+    TASKS.md's workstream grouping as is and keep the block between the
+    `<!-- neptr:implement-prompts:start/end -->` markers in
+    [../PROMPTS.md](../PROMPTS.md) as one prompt (you still set its `**Model:**`
+    line in step 11). Milestones must be ordered so the project stays green after each
     one and each is independently verifiable (its workstream's verification
     passes). If splitting:
     - Retitle the TASKS.md group headings as `## Milestone 1 — <name>`,
@@ -59,11 +69,20 @@ workstreams, in this order: **code, tests, docs, docker**.
     - In [../PROMPTS.md](../PROMPTS.md), replace everything **between**
       `<!-- neptr:implement-prompts:start -->` and
       `<!-- neptr:implement-prompts:end -->` (keep the marker lines) with one
-      prompt per milestone, each under a `### Milestone N — <name>` heading,
-      using exactly this template:
+      block per milestone. Each block is a `### Milestone N — <name>` heading,
+      then a `**Model:** <pick from the Model guide> — <≤6-word reason>` line
+      (sized per step 11), then this exact prompt:
       `Read {{featurePath}}/phases/implement.md and follow it exactly, scoped to Milestone N (<name>) only: execute that milestone's tasks per {{featurePath}}/PLAN.md, keeping the build green after each batch and updating TASKS.md, NOTES.md, and STATUS.md as you go. Do not start other milestones.`
     - Do not add per-milestone review prompts — there is one plan phase and one
       final review phase.
+11. **Recommend a model for every prompt.** Using the Model guide above, set the
+    `**Model:**` line on each prompt in [../PROMPTS.md](../PROMPTS.md) to the model
+    that fits its complexity, with a short reason (≤6 words). A pure file-move
+    milestone (mechanical relocation) is usually Low; a Docker milestone that wires
+    env/migrations or an ambiguous code split is Medium–High. Set the review line
+    (usually High, lower for a small migration) and, if you did not split, the
+    single implement prompt's line. Leave the Plan line as is — it has already run.
+    Give the Claude Code model name; the reader maps it to their editor via the guide.
 
 ## Rules
 

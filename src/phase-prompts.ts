@@ -3,6 +3,20 @@ import type { TemplateVars } from "./template.js";
 
 export type PhaseKey = "plan" | "implement" | "review";
 
+/**
+ * Complexity → model guide rendered into the plan-phase templates as {{modelMenu}}.
+ * Single source of truth so the plan agent picks from the same menu `neptr` prints
+ * in the phase headers. Keep model names current with the latest Claude line.
+ */
+export const MODEL_MENU = `| Complexity | Signs | Claude Code | Cursor |
+| --- | --- | --- | --- |
+| **High** | new architecture, cross-cutting or security-sensitive changes, ambiguous requirements, ~15+ files in play | Opus 4.8 | Opus (max mode) |
+| **Medium** | multi-file but well-scoped, follows an established pattern | Sonnet 5 | Sonnet |
+| **Low** | mechanical or single-file, boilerplate, file moves/renames | Haiku 4.5 | Haiku (or Auto) |
+
+Planning and review default to **High**; implementation depends on the milestone —
+size each one on its own.`;
+
 export interface PhasePrompt {
   key: PhaseKey;
   title: string;
@@ -17,19 +31,19 @@ export function featurePhasePrompts(featurePath: string): PhasePrompt[] {
     {
       key: "plan",
       title: "1. Plan",
-      modelHint: "use your smartest model",
+      modelHint: "Opus 4.8 · Cursor: Opus — smartest model for planning",
       prompt: `Read ${featurePath}/phases/plan.md and follow it exactly: research this codebase and fill in ${featurePath}/PLAN.md and ${featurePath}/TASKS.md for the feature described there. Do not write code.`,
     },
     {
       key: "implement",
       title: "2. Implement",
-      modelHint: "a cheaper model is fine",
+      modelHint: "sized per milestone at plan time — default Sonnet 5 · Cursor: Sonnet",
       prompt: `Read ${featurePath}/phases/implement.md and follow it exactly: implement the feature per ${featurePath}/PLAN.md, checking off TASKS.md and updating NOTES.md and STATUS.md as you go.`,
     },
     {
       key: "review",
       title: "3. Review",
-      modelHint: "back to the smart model",
+      modelHint: "Opus 4.8 · Cursor: Opus — back to the smart model",
       prompt: `Read ${featurePath}/phases/review.md and follow it exactly: verify the implementation in this repo against ${featurePath}/PLAN.md, fix what's broken, and set the status to done.`,
     },
   ];
@@ -41,19 +55,19 @@ export function adoptPhasePrompts(featurePath: string): PhasePrompt[] {
     {
       key: "plan",
       title: "1. Plan",
-      modelHint: "use your smartest model",
+      modelHint: "Opus 4.8 · Cursor: Opus — smartest model for planning",
       prompt: `Read ${featurePath}/phases/plan.md and follow it exactly: confirm the migration mapping and fill in ${featurePath}/PLAN.md and ${featurePath}/TASKS.md. Do not move files yet.`,
     },
     {
       key: "implement",
       title: "2. Implement",
-      modelHint: "a cheaper model is fine",
+      modelHint: "sized per milestone at plan time — default Sonnet 5 · Cursor: Sonnet",
       prompt: `Read ${featurePath}/phases/implement.md and follow it exactly: move the code, tests, and docs per ${featurePath}/PLAN.md and finish the Docker setup, keeping the build green after each batch.`,
     },
     {
       key: "review",
       title: "3. Review",
-      modelHint: "back to the smart model",
+      modelHint: "Opus 4.8 · Cursor: Opus — back to the smart model",
       prompt: `Read ${featurePath}/phases/review.md and follow it exactly: verify the code only moved (no behaviour change), every doc and test is accounted for, the Docker setup works, then fix any breakage and set the status to done.`,
     },
   ];

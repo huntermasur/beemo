@@ -160,6 +160,11 @@ groups `TASKS.md` into milestones and replaces the implement prompt in
 `PROMPTS.md` with one prompt per milestone — each runs in its own fresh session,
 keeping context (and token spend) small.
 
+Every prompt in `PROMPTS.md` carries a **Model** line. The planning agent sizes
+each one to the task's complexity and recommends a specific Claude Code / Cursor
+model (e.g. Opus 4.8 to plan, Haiku 4.5 for a mechanical milestone, Sonnet 5 for
+ordinary implementation), so you spend the big model only where it earns its keep.
+
 ## Development
 
 ```bash

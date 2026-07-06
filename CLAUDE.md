@@ -41,7 +41,13 @@ Docker.
   `<!-- neptr:implement-prompts:start/end -->` markers, which the plan-phase agent
   replaces with one prompt per `## Milestone N` group when it splits large work in
   TASKS.md (milestone rules live in the `phases/{plan,implement,review}.md`
-  templates, not in TS; adopt milestones default to the workstreams).
+  templates, not in TS; adopt milestones default to the workstreams). Each
+  `PhasePrompt.modelHint` seeds a `**Model:** …` line under its heading in
+  `PROMPTS.md` (the implement one lives inside the markers); the plan-phase agent
+  rewrites those lines per prompt/milestone from the complexity→model table
+  exported here as `MODEL_MENU` and rendered into both plan templates as
+  `{{modelMenu}}` (feature.ts/adopt.ts pass it). Keep `MODEL_MENU`'s model names
+  current with the latest Claude line — it's the single source for the guide.
 - `src/adopt.ts` — `neptr adopt`: turns an **existing** project into a NEPTR
  project, planning a full refactor across four workstreams: code, tests, docs,
  Docker. Two halves, mirroring the split between what's safe to automate and what

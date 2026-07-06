@@ -15,7 +15,7 @@ import {
 import { AGENT_IDS, DEFAULTS, type NEPTRConfig, VITE_TEMPLATES, type ViteTemplate } from "./config.js";
 import { slugify } from "./feature.js";
 import { installIndexing } from "./indexer.js";
-import { adoptPhasePrompts, phasePromptVars, printPhasePrompts } from "./phase-prompts.js";
+import { adoptPhasePrompts, MODEL_MENU, phasePromptVars, printPhasePrompts } from "./phase-prompts.js";
 import { bail, ensure } from "./prompts.js";
 import { writeAgentInstructions } from "./steps/agents.js";
 import { templateVars } from "./steps/ai-docs.js";
@@ -278,6 +278,7 @@ export async function runAdopt(flags: AdoptFlags): Promise<void> {
         projectName: config.projectName,
         date: new Date().toISOString().slice(0, 10),
         featurePath,
+        modelMenu: MODEL_MENU,
         inventory: buildInventory(root),
         docsInventory,
         testsInventory,

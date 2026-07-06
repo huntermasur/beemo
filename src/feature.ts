@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { featurePhasePrompts, phasePromptVars, printPhasePrompts } from "./phase-prompts.js";
+import { featurePhasePrompts, MODEL_MENU, phasePromptVars, printPhasePrompts } from "./phase-prompts.js";
 import { bail, ensure } from "./prompts.js";
 import { renderDir, renderFile } from "./template.js";
 import { neptr } from "./theme.js";
@@ -116,6 +116,7 @@ export async function runFeature(description: string | undefined, flags: Feature
     description: desc,
     date: new Date().toISOString().slice(0, 10),
     featurePath,
+    modelMenu: MODEL_MENU,
     ...phasePromptVars(prompts),
   });
 
