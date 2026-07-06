@@ -109,6 +109,18 @@ Full plan context lives in the project README and CLAUDE.md.
 - [x] `test/mcp-registry.test.ts` rewritten for the new client + verifier
 - [ ] Verified: live `--search-only` + `--yes` install writes a valid, version-pinned `.mcp.json`
 
+## M13 — `neptr index` (deterministic repo index for Claude Code)
+- [x] `src/indexer.ts` — deterministic scan of `src/` (regex export + top-of-file purpose
+      extraction) → `.docs/REPO_MAP.md`; marker-based refresh of the Folder map / Key files
+      tables in `.agents/KNOWLEDGE_MAP.md`; `runIndex` (`--quiet`/`--setup`/`--check`)
+- [x] `templates/.agents/KNOWLEDGE_MAP.md` — `neptr:foldermap`/`neptr:keyfiles` markers +
+      REPO_MAP.md row in the documentation index
+- [x] `templates/.githooks/pre-commit` — non-blocking `neptr index --quiet` + stage
+- [x] `src/steps/indexing.ts` (`indexingStep`) wired into `STEPS` before git; `.claude/settings.json`
+      SessionStart hook + `.githooks/pre-commit` installed; `git.ts` sets `core.hooksPath`
+- [x] `neptr index` registered in `src/cli.ts`
+- [ ] Verified: scaffold + `neptr index` refresh + determinism + retrofit in a scratchpad project
+
 ## Backlog (future ideas)
 - [ ] `neptr add <feature>` — retrofit docs/docker/mcp/skills onto an existing project
 - [ ] `neptr feature list` — show feature workspaces and their `Status:` lines

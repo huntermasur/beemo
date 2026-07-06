@@ -17,6 +17,9 @@ coding agents.
 - **`.docs/` tree** — `environment.md` (how to run the project), `module-map.md` (where
   each component type lives), an `architecture/` folder (architecture doc, specs, ADRs), a
   `feature/` folder for `neptr feature` workspaces, and a `documents/` folder for user documents
+- **Repo index for Claude Code** — `neptr index` scans `src/` into `.docs/REPO_MAP.md`
+  (a deterministic, greppable per-file map of exports) and keeps the `KNOWLEDGE_MAP.md`
+  tables current; auto-refreshed via a Claude Code SessionStart hook and a git pre-commit hook
 - **MCP config** (`.mcp.json` for Claude + `.cursor/mcp.json` for Cursor, kept in sync) — playwright, context7, github (your pick)
 - **Skills** — checklist of top [skills.sh](https://skills.sh) skills
 - **Docker** — multi-stage Dockerfile + compose for dev and prod
@@ -35,6 +38,7 @@ neptr doctor              # check your environment
 neptr feature             # start a plan → implement → review feature workspace
 neptr skill web design    # find & install security-checked skills from skills.sh
 neptr mcp postgres        # find & install safety-checked MCP servers from the MCP registry
+neptr index               # rebuild the repo map Claude Code reads (auto-run by hooks)
 ```
 
 ## Installing skills
@@ -75,6 +79,32 @@ installing (for the plan phase) and `--yes` adds every shown safe server without
 prompting (for the implement phase). Remote-only servers with no local package
 are wired to their hosted endpoint; anything with no launch command is listed so
 you can configure it by hand.
+
+## Indexing for Claude Code
+
+Cursor builds a semantic index of your repo. Claude Code doesn't — it's *agentic*:
+it greps, globs, and reads files on demand and auto-loads `CLAUDE.md`. So the thing
+that actually helps it is a **fresh, deterministic, greppable map** of the code, not
+embeddings.
+
+`neptr index` builds exactly that. It scans `src/` (regex extraction of exported
+symbols + each file's top-of-file comment — no LLM, fully deterministic) and writes
+`.docs/REPO_MAP.md`: every source file, its exports, and a one-line purpose. It also
+refreshes the Folder map / Key files tables inside `.agents/KNOWLEDGE_MAP.md` between
+marker comments, leaving your hand-written prose untouched.
+
+You don't run it by hand. New projects get two triggers wired up automatically:
+
+- a **Claude Code SessionStart hook** (`.claude/settings.json`) so the map is fresh
+  every time you open Claude Code, and
+- a tracked **git pre-commit hook** (`.githooks/pre-commit`, activated via
+  `core.hooksPath`) so the committed map always matches the code — which means Cursor
+  benefits too.
+
+Both hooks are non-blocking: if `neptr` isn't on your PATH or indexing fails, your
+session and commits proceed anyway. To add indexing to a project that predates this
+feature, run `neptr index --setup` once inside it; `neptr index --check` is a CI guard
+that fails when the map is stale.
 
 ## Feature workflow
 

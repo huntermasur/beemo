@@ -33,4 +33,10 @@ export async function gitStep(config: NEPTRConfig): Promise<void> {
   await run("git", ["init", "-b", "main"], opts);
   await run("git", ["add", "-A"], opts);
   await run("git", ["commit", "-m", "Initial commit from NEPTR"], opts);
+
+  // Activate the shared pre-commit hook (added by the indexing step) *after* the
+  // initial commit, so the first commit stays fast and can't be blocked by it.
+  if (fs.existsSync(path.join(config.targetDir, ".githooks"))) {
+    await run("git", ["config", "core.hooksPath", ".githooks"], opts);
+  }
 }

@@ -15,12 +15,14 @@ import { dockerStep } from "./steps/docker.js";
 import { installStep } from "./steps/install.js";
 import { skillsStep } from "./steps/skills.js";
 import { envStep } from "./steps/env.js";
+import { indexingStep } from "./steps/indexing.js";
 import { gitStep } from "./steps/git.js";
 import { commandExists, run } from "./run.js";
 import { doctor } from "./doctor.js";
 import { runFeature, type FeatureFlags } from "./feature.js";
 import { runSkill, type SkillFlags } from "./skill.js";
 import { runMcp, type McpFlags } from "./mcp.js";
+import { runIndex, type IndexFlags } from "./indexer.js";
 
 interface Step {
   name: string;
@@ -87,6 +89,12 @@ const STEPS: Step[] = [
     enabled: () => true,
     run: envStep,
     fix: () => "copy .env.example to .env by hand",
+  },
+  {
+    name: "Set up code indexing",
+    enabled: () => true,
+    run: indexingStep,
+    fix: () => "run `neptr index --setup` inside the project to build the map and install its hooks",
   },
   {
     name: "Initialize git",
@@ -257,6 +265,25 @@ program
     neptr.say(randomQuote());
     try {
       await runMcp(query.join(" "), flags);
+    } catch (err) {
+      neptr.error(err instanceof Error ? err.message : String(err));
+      process.exitCode = 1;
+    }
+  });
+
+program
+  .command("index")
+  .description("Build/refresh the repo map Claude Code reads (.docs/REPO_MAP.md + KNOWLEDGE_MAP tables)")
+  .option("--quiet", "minimal output — used by the SessionStart and pre-commit hooks")
+  .option("--setup", "also install the SessionStart + pre-commit automation in this project (retrofit)")
+  .option("--check", "exit non-zero if the map is out of date; write nothing (CI guard)")
+  .action(async (flags: IndexFlags) => {
+    if (!flags.quiet) {
+      console.log(NEPTR_BANNER);
+      neptr.say(randomQuote());
+    }
+    try {
+      await runIndex(flags);
     } catch (err) {
       neptr.error(err instanceof Error ? err.message : String(err));
       process.exitCode = 1;

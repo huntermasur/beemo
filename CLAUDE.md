@@ -17,7 +17,7 @@ Docker.
 - Test scaffolds go in a throwaway directory (scratchpad), never inside this repo
 
 ## Architecture
-- `src/cli.ts` — commander entry point; subcommands: `new`, `doctor`, `feature`, `skill`, `mcp`
+- `src/cli.ts` — commander entry point; subcommands: `new`, `doctor`, `feature`, `skill`, `mcp`, `index`
 - `src/theme.ts` — NEPTR ASCII art, palette, quotes; all user-facing output goes through this
 - `src/wizard.ts` — @clack/prompts flow producing a `NEPTRConfig`
 - `src/prompts.ts` — shared clack helpers (`bail`, `ensure` cancel handling)
@@ -31,6 +31,17 @@ Docker.
 - `src/skill.ts` / `src/skills-registry.ts` — `neptr skill`: searches skills.sh,
   filters to popular skills whose security audits all pass, and installs the
   selected ones into `.agents/skills/` via `npx skills add`.
+- `src/indexer.ts` — `neptr index`: deterministically scans `src/` (regex export +
+  top-of-file comment extraction, no LLM) into `.docs/REPO_MAP.md`, and refreshes the
+  Folder map / Key files tables in `.agents/KNOWLEDGE_MAP.md` between
+  `<!-- neptr:foldermap:start/end -->` / `<!-- neptr:keyfiles:start/end -->` markers
+  (prose outside the markers is preserved). This is the "index" Claude Code consumes —
+  it has no vector index; it greps/reads, so a fresh deterministic map is the win.
+  Output is byte-stable so the pre-commit hook never makes spurious diffs. Flags:
+  `--quiet` (hooks), `--setup` (retrofit: install hooks in an existing project),
+  `--check` (CI drift guard). `installIndexing()` is the scaffold entry used by
+  `steps/indexing.ts`. Auto-maintained via a `.claude/settings.json` SessionStart hook
+  and a tracked `.githooks/pre-commit` (activated by `git.ts` setting `core.hooksPath`).
 - `src/mcp.ts` / `src/mcp-registry.ts` — `neptr mcp`: searches the official MCP
   registry (`registry.modelcontextprotocol.io/v0/servers` — the upstream GitHub's
   MCP registry mirrors), then runs its own transparent safety check per server
@@ -51,7 +62,9 @@ Docker.
   `steps/src-layout.ts` lays the canonical role-based sections under `src/` —
   `app/`, `modules/`, `services/`, `data/`, `integrations/`, `shared/`, `config/` (from
   `templates/src-layout/`) — plus a root `tests/` folder (from `templates/tests/`),
-  each seeded with a README)
+  each seeded with a README; `steps/indexing.ts` runs the initial `neptr index` and
+  installs its SessionStart + pre-commit hooks — placed late in `STEPS` (before git) so
+  the Key files table sees the MCP/Docker files, and `git.ts` then sets `core.hooksPath`)
 - `templates/` — every file generated into scaffolded projects; ships in the npm package
 
 ## Conventions
