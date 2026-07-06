@@ -28,6 +28,16 @@ Docker.
   and `neptr mcp --search-only`; the implement phase installs them with
   `neptr skill --yes` / `neptr mcp --yes`. This discovery/install behavior lives in
   the phase templates (`templates/feature/phases/*.md`), not in `feature.ts`.
+- `src/phase-prompts.ts` — single source of truth for the copy-paste prompts of both
+  `neptr feature` and `neptr adopt`: the same `PhasePrompt[]` data drives the console
+  output (`printPhasePrompts`, plain `console.log` so copies don't capture clack
+  gutters) and the template vars (`phasePromptVars`) rendered into the workspace's
+  `PROMPTS.md` — so terminal and file can never drift. `PROMPTS.md` persists the
+  prompts past a closed terminal; its implement prompt sits between
+  `<!-- neptr:implement-prompts:start/end -->` markers, which the plan-phase agent
+  replaces with one prompt per `## Milestone N` group when it splits large work in
+  TASKS.md (milestone rules live in the `phases/{plan,implement,review}.md`
+  templates, not in TS; adopt milestones default to the workstreams).
 - `src/adopt.ts` — `neptr adopt`: turns an **existing** project into a NEPTR
  project, planning a full refactor across four workstreams: code, tests, docs,
  Docker. Two halves, mirroring the split between what's safe to automate and what
@@ -43,7 +53,8 @@ Docker.
  from `templates/adopt/`, pre-filling NOTES.md with inventories from `adopt-scan.ts`
  (code via `buildInventory`/`suggestSection`, docs, tests, detected services,
  env/config, monorepo note) — then prints the plan → implement → review copy-paste
- prompts, whose phase templates work the workstreams in order code → tests → docs →
+ prompts (also persisted to the workspace's `PROMPTS.md` via `phase-prompts.ts`),
+ whose phase templates work the workstreams in order code → tests → docs →
  docker. Like `feature.ts`, it never calls an LLM; the risky moves, link fixes, and
  Docker verification are the agent's job. Flags: `--name`, `--agents`, `--no-index`,
  `--no-plan`, `--no-docs`, `--no-tests`, `--no-docker`, `--yes`.

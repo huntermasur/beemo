@@ -10,7 +10,9 @@ Verify exactly that, workstream by workstream.
 1. Check [../STATUS.md](../STATUS.md): the status must be `implemented`. If it
    isn't, stop and tell the user which phase should run instead.
 2. Read [../PLAN.md](../PLAN.md), [../TASKS.md](../TASKS.md), and
-   [../NOTES.md](../NOTES.md).
+   [../NOTES.md](../NOTES.md). If TASKS.md is grouped into `## Milestone N`
+   headings, verify every milestone's tasks and confirm the STATUS.md log shows
+   each milestone completed.
 
 ## Review — code
 

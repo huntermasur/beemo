@@ -131,8 +131,12 @@ halves, split along the line between what's safe to automate and what isn't:
   your current code, docs, tests, detected services, and env/config files (each
   entry tagged with a *suggested* target), and prints three copy-paste prompts —
   plan → implement → review — for an agent to execute across four ordered
-  workstreams (code → tests → docs → docker) and for you to review. As with
-  `neptr feature`, NEPTR never calls an LLM itself.
+  workstreams (code → tests → docs → docker) and for you to review. The prompts
+  are also saved to the workspace's `PROMPTS.md`, so they survive a closed
+  terminal; for large migrations the planning agent splits the work into
+  milestones (usually one per workstream) and writes one implement prompt per
+  milestone there, each run in a fresh session. As with `neptr feature`, NEPTR
+  never calls an LLM itself.
 
 Flags: `--name <slug>` (rename the migration workspace), `--agents <list>` (which
 agent instruction files to write), `--no-index` (skip the code index/hooks),
@@ -145,9 +149,14 @@ Inside a project, `neptr feature` breaks a feature into three agent-driven phase
 so you can use a smart (expensive) model to plan and review while a cheaper model
 does the coding. It asks for a name and description, scaffolds
 `.docs/feature/<slug>/` (plan, task list, status, notes, and per-phase agent
-instructions), and prints three copy-paste prompts — one per phase. Run each
-prompt in a fresh agent session; every phase ends by updating the workspace's
-`STATUS.md` and pausing so you stay in control between phases.
+instructions), and prints three copy-paste prompts — one per phase. The prompts
+are also saved to the workspace's `PROMPTS.md`, so losing the terminal doesn't
+lose them. Run each prompt in a fresh agent session; every phase ends by
+updating the workspace's `STATUS.md` and pausing so you stay in control between
+phases. If the feature is too big for one implement session, the planning agent
+groups `TASKS.md` into milestones and replaces the implement prompt in
+`PROMPTS.md` with one prompt per milestone — each runs in its own fresh session,
+keeping context (and token spend) small.
 
 ## Development
 

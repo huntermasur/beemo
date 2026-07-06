@@ -2,6 +2,7 @@ import * as p from "@clack/prompts";
 import fs from "node:fs";
 import path from "node:path";
 import pc from "picocolors";
+import { featurePhasePrompts, phasePromptVars, printPhasePrompts } from "./phase-prompts.js";
 import { bail, ensure } from "./prompts.js";
 import { renderDir, renderFile } from "./template.js";
 import { neptr } from "./theme.js";
@@ -108,30 +109,18 @@ export async function runFeature(description: string | undefined, flags: Feature
   if (!fs.existsSync(featuresReadme)) {
     renderFile(".docs/feature/README.md", featuresReadme, {});
   }
+  const prompts = featurePhasePrompts(featurePath);
   renderDir("feature", featureDir, {
     featureName,
     description: desc,
     date: new Date().toISOString().slice(0, 10),
     featurePath,
+    ...phasePromptVars(prompts),
   });
 
   p.log.success(`Feature workspace created at ${featurePath}/`);
   p.outro("NEPTR baked a fresh feature pie!");
 
-  // Plain console.log for the prompts themselves: clack's gutter characters
-  // would be captured when the user copies the line.
-  console.log(pc.bold("Next: run each phase with an agent — copy, paste, deploy.\n"));
-  console.log(pc.green(pc.bold("1. Plan")) + pc.dim("  — use your smartest model"));
-  console.log(
-    `Read ${featurePath}/phases/plan.md and follow it exactly: research this codebase and fill in ${featurePath}/PLAN.md and ${featurePath}/TASKS.md for the feature described there. Do not write code.\n`,
-  );
-  console.log(pc.green(pc.bold("2. Implement")) + pc.dim("  — a cheaper model is fine"));
-  console.log(
-    `Read ${featurePath}/phases/implement.md and follow it exactly: implement the feature per ${featurePath}/PLAN.md, checking off TASKS.md and updating NOTES.md and STATUS.md as you go.\n`,
-  );
-  console.log(pc.green(pc.bold("3. Review")) + pc.dim("  — back to the smart model"));
-  console.log(
-    `Read ${featurePath}/phases/review.md and follow it exactly: verify the implementation in this repo against ${featurePath}/PLAN.md, fix what's broken, and set the status to done.\n`,
-  );
+  printPhasePrompts(prompts, featurePath);
   neptr.say("Paste each prompt into a fresh agent session — one phase at a time, like layers in a pie!");
 }

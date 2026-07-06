@@ -14,6 +14,9 @@ Assume nothing the implementer wrote is true until you have verified it.
 
 - Verify the actual code against the plan and every TASKS.md item — read the
   changed files; do not trust the checkboxes.
+- If TASKS.md is grouped into `## Milestone N` headings, verify every
+  milestone's tasks and confirm the [../STATUS.md](../STATUS.md) log shows each
+  milestone completed.
 - Run the project's verification commands (`.docs/environment.md` if present,
   otherwise `package.json` scripts): typecheck, build, tests.
 - Exercise the feature itself where possible, not just the checks.

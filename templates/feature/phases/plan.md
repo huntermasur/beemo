@@ -36,6 +36,24 @@ without guessing.
    small, concrete, and independently verifiable, with enough detail that the
    implementer never has to re-derive the approach. Include early tasks to
    install the recommended skills and MCP servers (if any).
+8. Decide whether the feature needs **milestones**. Split when any of these
+   holds: TASKS.md has more than ~12 tasks; the tasks span 3+ unrelated areas of
+   the codebase; or an implementer would need more files in context than fits
+   one session (roughly 15+ files to read or change). If it fits one session,
+   do NOT split — leave TASKS.md flat, leave [../PROMPTS.md](../PROMPTS.md)
+   untouched, and skip the rest of this step. If splitting:
+   - Regroup TASKS.md under `## Milestone 1 — <name>`, `## Milestone 2 — <name>`,
+     … headings, in dependency order. Aim for 2–5 milestones, each sized to one
+     agent session. Every milestone must leave the project green (typecheck/
+     build/tests pass) and be independently verifiable — never split mid-task.
+   - In [../PROMPTS.md](../PROMPTS.md), replace everything **between**
+     `<!-- neptr:implement-prompts:start -->` and
+     `<!-- neptr:implement-prompts:end -->` (keep the marker lines) with one
+     prompt per milestone, each under a `### Milestone N — <name>` heading,
+     using exactly this template:
+     `Read {{featurePath}}/phases/implement.md and follow it exactly, scoped to Milestone N (<name>) only: implement that milestone's tasks per {{featurePath}}/PLAN.md, checking off TASKS.md and updating NOTES.md and STATUS.md as you go. Do not start other milestones.`
+   - Do not add per-milestone review prompts — there is one plan phase and one
+     final review phase.
 
 ## Rules
 
@@ -48,4 +66,6 @@ without guessing.
 1. In [../STATUS.md](../STATUS.md), set the status line to `Status: planned` and
    append a log row.
 2. Stop. Tell the user the plan is ready for their review, and that the next
-   step is the implement phase (`{{featurePath}}/phases/implement.md`).
+   step is the implement phase (`{{featurePath}}/phases/implement.md`). If you
+   created milestones, say how many and that each implement prompt in
+   `{{featurePath}}/PROMPTS.md` runs in a fresh agent session, in order.

@@ -45,6 +45,25 @@ workstreams, in this order: **code, tests, docs, docker**.
    its workstream's verification. The first task should establish or confirm a
    path alias if that makes the moves safer; the last should delete now-empty old
    folders and refresh the docs.
+10. Group the work into **milestones** — for a migration this is the default,
+    aligned with the workstreams: one milestone per workstream
+    (code → tests → docs → docker), splitting the code workstream into several
+    milestones when the inventory has more than ~20 files to move. Only skip
+    milestones when the whole migration is small (under ~12 tasks) — then leave
+    TASKS.md's workstream grouping as is and [../PROMPTS.md](../PROMPTS.md)
+    untouched. Milestones must be ordered so the project stays green after each
+    one and each is independently verifiable (its workstream's verification
+    passes). If splitting:
+    - Retitle the TASKS.md group headings as `## Milestone 1 — <name>`,
+      `## Milestone 2 — <name>`, … in that order.
+    - In [../PROMPTS.md](../PROMPTS.md), replace everything **between**
+      `<!-- neptr:implement-prompts:start -->` and
+      `<!-- neptr:implement-prompts:end -->` (keep the marker lines) with one
+      prompt per milestone, each under a `### Milestone N — <name>` heading,
+      using exactly this template:
+      `Read {{featurePath}}/phases/implement.md and follow it exactly, scoped to Milestone N (<name>) only: execute that milestone's tasks per {{featurePath}}/PLAN.md, keeping the build green after each batch and updating TASKS.md, NOTES.md, and STATUS.md as you go. Do not start other milestones.`
+    - Do not add per-milestone review prompts — there is one plan phase and one
+      final review phase.
 
 ## Rules
 
@@ -64,4 +83,6 @@ workstreams, in this order: **code, tests, docs, docker**.
 1. In [../STATUS.md](../STATUS.md), set the status line to `Status: planned` and
    append a log row.
 2. Stop. Tell the user the plan is ready for review, and that the next step is the
-   implement phase (`{{featurePath}}/phases/implement.md`).
+   implement phase (`{{featurePath}}/phases/implement.md`). If you created
+   milestones, say how many and that each implement prompt in
+   `{{featurePath}}/PROMPTS.md` runs in a fresh agent session, in order.

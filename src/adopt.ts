@@ -2,6 +2,7 @@ import * as p from "@clack/prompts";
 import fs from "node:fs";
 import path from "node:path";
 import pc from "picocolors";
+import { adoptPhasePrompts, phasePromptVars, printPhasePrompts } from "./phase-prompts.js";
 import { bail, ensure } from "./prompts.js";
 import { renderDir, renderFile } from "./template.js";
 import { templateVars } from "./steps/ai-docs.js";
@@ -268,6 +269,7 @@ export async function runAdopt(flags: AdoptFlags): Promise<void> {
         renderFile(".docs/feature/README.md", featuresReadme, {});
       }
       renderDir("adopt", featureDir, {
+        ...phasePromptVars(adoptPhasePrompts(featurePath)),
         projectName: config.projectName,
         stack: vars.stack ?? config.template,
         date: new Date().toISOString().slice(0, 10),
@@ -297,20 +299,7 @@ export async function runAdopt(flags: AdoptFlags): Promise<void> {
   p.outro("NEPTR has moved in! The boilerplate is baked; now let an agent do the moving.");
 
   if (planCreated) {
-    // Plain console.log so copied prompts don't capture clack's gutter.
-    console.log(pc.bold("Next: run each phase with an agent — copy, paste, deploy.\n"));
-    console.log(pc.green(pc.bold("1. Plan")) + pc.dim("  — use your smartest model"));
-    console.log(
-      `Read ${featurePath}/phases/plan.md and follow it exactly: confirm the migration mapping and fill in ${featurePath}/PLAN.md and ${featurePath}/TASKS.md. Do not move files yet.\n`,
-    );
-    console.log(pc.green(pc.bold("2. Implement")) + pc.dim("  — a cheaper model is fine"));
-    console.log(
-      `Read ${featurePath}/phases/implement.md and follow it exactly: move the code, tests, and docs per ${featurePath}/PLAN.md and finish the Docker setup, keeping the build green after each batch.\n`,
-    );
-    console.log(pc.green(pc.bold("3. Review")) + pc.dim("  — back to the smart model"));
-    console.log(
-      `Read ${featurePath}/phases/review.md and follow it exactly: verify the code only moved (no behaviour change), every doc and test is accounted for, the Docker setup works, then fix any breakage and set the status to done.\n`,
-    );
+    printPhasePrompts(adoptPhasePrompts(featurePath), featurePath);
   } else {
     console.log(
       pc.dim("Scaffolding retrofitted. Run `neptr adopt` without --no-plan to also generate the migration workspace.\n"),

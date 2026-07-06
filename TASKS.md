@@ -153,6 +153,24 @@ Full plan context lives in the project README and CLAUDE.md.
       project, existing-Dockerfile project) + skip-flag run; `docker compose config`
       parses the drafted compose clean; no secrets leak, 0 unresolved `{{}}`
 
+## M16 — Persisted phase prompts + milestone breakdown
+- [x] `src/phase-prompts.ts` — single source of truth for the plan/implement/review
+      copy-paste prompts (`featurePhasePrompts`/`adoptPhasePrompts`), console printer
+      (`printPhasePrompts`), and template vars (`phasePromptVars`)
+- [x] `templates/feature/PROMPTS.md` + `templates/adopt/PROMPTS.md` — prompts persisted
+      into every workspace with `neptr:implement-prompts` markers for milestone rewrites
+- [x] `src/feature.ts` / `src/adopt.ts` wired to the shared prompts (adopt writes
+      PROMPTS.md only when the migration workspace is created)
+- [x] Milestone breakdown in phase templates: plan phases split large work into
+      `## Milestone N` TASKS.md groups + per-milestone implement prompts in PROMPTS.md;
+      implement phases gained milestone scoping/status gates; review phases verify
+      all milestones (adopt milestones default to the code → tests → docs → docker
+      workstreams)
+- [x] `test/phase-prompts.test.ts` — prompt order/content, template vars, PROMPTS.md
+      render contract (no unresolved `{{}}`, markers present)
+- [x] Verified: `neptr feature` + `neptr adopt` in scratchpad projects write PROMPTS.md
+      matching the console output; `--no-plan` writes none
+
 ## Backlog (future ideas)
 - [ ] `neptr feature list` — show feature workspaces and their `Status:` lines
 - [ ] Live docker compose build verification once Docker Desktop is installed
