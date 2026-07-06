@@ -212,6 +212,40 @@ Full plan context lives in the project README and CLAUDE.md.
       green incl. CRLF working copies, stale tables detected), adopt (test files excluded
       from code inventory, Docker drafts correct, re-run non-destructive), live skill search
 
+## M18 — Session topology in the plan phase + MODEL_MENU refresh (2026-07-06)
+- [x] `src/phase-prompts.ts` — `MODEL_MENU` updated to the Claude 5 line (High →
+      Fable 5 / Opus 4.8; dropped the "~15+ files" sign) + combined-session note;
+      plan/review `modelHint`s now recommend Fable 5 or Opus 4.8
+- [x] Plan phases (`templates/{feature,adopt}/phases/plan.md`) now pick the
+      **session topology**: combined (plan + implement in the plan session, small
+      low-risk work on a High-tier model, gated on user approval, marked
+      `**Topology:** combined` in PROMPTS.md), single implement session (default),
+      or milestone split (trigger loosened — checkpoints/reviewability, not
+      context size); review always runs in its own fresh session
+- [x] Implement phases tolerate combined runs (status gate stays, no re-read of
+      in-context files); review phases require a fresh session; PROMPTS.md
+      blockquotes explain the combined fallback prompt
+- [x] Docs: CLAUDE.md phase-prompts bullet, README feature-workflow section
+- [x] Verified: `npm run check` green; scratchpad `neptr feature` workspace renders
+      the topology step, updated model menu, and intact markers
+
+## M19 — Fable 5-aligned behavior instructions (2026-07-06)
+- [x] `.agents/` hub templates (+ the repo's own copies): "Work as a partner" reworked
+      per Anthropic's Fable 5 prompting guide — act once confident (no overplanning,
+      no option surveys), recommend rather than enumerate, state decisions/assumptions
+      instead of narrating reasoning (reasoning-echo instructions can trigger Fable 5
+      refusals); new "Know when not to act" negative-prompt section (no scope creep,
+      no impossible-scenario handling, assess-don't-fix, no pattern-match actions)
+- [x] Prove-your-work rule: constitution "Truthfulness" and AI_INSTRUCTIONS
+      "Before you finish" now require every done-claim to point to code (file/lines)
+      or command output; feature/adopt implement + review phases ground checkboxes
+      and final summaries in session evidence
+- [x] `MODEL_MENU` gained an Effort column (high/medium/low, matched to tier, never
+      above high); plan phases write effort onto `**Model:**` lines; plan/review
+      modelHints and PROMPTS.md headers mention effort
+- [x] CLAUDE.md gained a "Working style" section with the same rules for agents
+      working on neptr itself
+
 ## Backlog (future ideas)
 - [ ] `neptr feature list` — show feature workspaces and their `Status:` lines
 - [ ] Live docker compose build verification once Docker Desktop is installed

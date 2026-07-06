@@ -155,16 +155,22 @@ does the coding. It asks for a name and description, scaffolds
 `.docs/feature/<slug>/` (plan, task list, status, notes, and per-phase agent
 instructions), and prints three copy-paste prompts — one per phase. The prompts
 are also saved to the workspace's `PROMPTS.md`, so losing the terminal doesn't
-lose them. Run each prompt in a fresh agent session; every phase ends by
-updating the workspace's `STATUS.md` and pausing so you stay in control between
-phases. If the feature is too big for one implement session, the planning agent
-groups `TASKS.md` into milestones and replaces the implement prompt in
-`PROMPTS.md` with one prompt per milestone — each runs in its own fresh session,
-keeping context (and token spend) small.
+lose them. Every phase ends by updating the workspace's `STATUS.md` and pausing
+so you stay in control between phases.
+
+The planning agent also picks the **session topology** to fit the work and the
+model running it. Small, low-risk features on a frontier model (Fable 5 /
+Opus 4.8) can run plan + implement in one **combined session** — after you
+approve the plan, the same agent carries on implementing, so nothing is lost in
+a handoff. Ordinary features get one fresh implement session; if the work is
+big, the planning agent groups `TASKS.md` into milestones and replaces the
+implement prompt in `PROMPTS.md` with one prompt per milestone, each run in its
+own fresh session. Whatever the topology, review always runs in its own fresh
+session — a cold reviewer catches what a warm one anchors past.
 
 Every prompt in `PROMPTS.md` carries a **Model** line. The planning agent sizes
 each one to the task's complexity and recommends a specific Claude Code / Cursor
-model (e.g. Opus 4.8 to plan, Haiku 4.5 for a mechanical milestone, Sonnet 5 for
+model (e.g. Fable 5 to plan, Haiku 4.5 for a mechanical milestone, Sonnet 5 for
 ordinary implementation), so you spend the big model only where it earns its keep.
 
 ## Development

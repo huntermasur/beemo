@@ -18,7 +18,10 @@ green after every batch.
    If the check fails, stop and tell the user which phase or milestone should
    run instead.
 3. Read [../PLAN.md](../PLAN.md) (especially the **Target mapping** tables and the
-   **Docker plan**) and [../TASKS.md](../TASKS.md) in full.
+   **Docker plan**) and [../TASKS.md](../TASKS.md) in full. If you are running
+   combined (the plan phase chose the combined topology and this is the same
+   session that planned), the status gate above still applies, but you need not
+   re-read files already in your context.
 4. Make sure the working tree is clean and committed, so each batch is an
    easy diff to review and revert. If it isn't, tell the user before proceeding.
 5. On the first run only (unscoped, or Milestone 1): run the test suite once and
@@ -102,4 +105,6 @@ on an unscoped run or the **final** milestone.
    tells the reviewer what to look at.
 5. Set the status line to `Status: implemented` and append a log row.
 6. Stop. Tell the user the migration is complete and the next step is the review
-   phase (`{{featurePath}}/phases/review.md`).
+   phase (`{{featurePath}}/phases/review.md`). Ground every claim in that summary in
+   evidence from this session — the moves made, the configs touched, and the check
+   output — and label anything unverified as unverified rather than hedging.

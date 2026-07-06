@@ -1,7 +1,9 @@
 # Phase 3 — Review
 
 You are the reviewing agent for the feature workspace at `{{featurePath}}/`.
-Assume nothing the implementer wrote is true until you have verified it.
+Assume nothing the implementer wrote is true until you have verified it. This
+phase must run in a fresh agent session — never in the session that planned or
+implemented, whatever topology the plan chose.
 
 ## Before you start
 
@@ -47,4 +49,6 @@ Assume nothing the implementer wrote is true until you have verified it.
 2. Set the status line in [../STATUS.md](../STATUS.md) to `Status: done` and
    append a log row.
 3. Summarize for the user: what was verified, what was fixed, what tooling was
-   removed, and any residual risk or follow-up work.
+   removed, and any residual risk or follow-up work. Every claim must trace to
+   something you ran or read in this session — name the files and the commands whose
+   output backs it. Do not report as verified anything you didn't exercise yourself.

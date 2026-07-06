@@ -8,14 +8,18 @@ export type PhaseKey = "plan" | "implement" | "review";
  * Single source of truth so the plan agent picks from the same menu `neptr` prints
  * in the phase headers. Keep model names current with the latest Claude line.
  */
-export const MODEL_MENU = `| Complexity | Signs | Claude Code | Cursor |
-| --- | --- | --- | --- |
-| **High** | new architecture, cross-cutting or security-sensitive changes, ambiguous requirements, ~15+ files in play | Opus 4.8 | Opus (max mode) |
-| **Medium** | multi-file but well-scoped, follows an established pattern | Sonnet 5 | Sonnet |
-| **Low** | mechanical or single-file, boilerplate, file moves/renames | Haiku 4.5 | Haiku (or Auto) |
+export const MODEL_MENU = `| Complexity | Signs | Claude Code | Cursor | Effort |
+| --- | --- | --- | --- | --- |
+| **High** | new architecture, cross-cutting or security-sensitive changes, ambiguous requirements | Fable 5 (or Opus 4.8) | Fable / Opus (max mode) | high |
+| **Medium** | multi-file but well-scoped, follows an established pattern | Sonnet 5 | Sonnet | medium |
+| **Low** | mechanical or single-file, boilerplate, file moves/renames | Haiku 4.5 | Haiku (or Auto) | low |
 
-Planning and review default to **High**; implementation depends on the milestone —
-size each one on its own.`;
+Where the model exposes an effort setting (Fable 5), match it to the tier — and never
+recommend above **high**: high already produces rigorous verification, and past it you
+pay latency and cost for gains this workflow doesn't need. Planning and review default
+to **High**; implementation depends on the milestone — size each one on its own. A
+High-tier model can also carry plan + implement in one **combined session** when the
+plan phase chooses that topology (see the session topology step).`;
 
 export interface PhasePrompt {
   key: PhaseKey;
@@ -31,7 +35,7 @@ export function featurePhasePrompts(featurePath: string): PhasePrompt[] {
     {
       key: "plan",
       title: "1. Plan",
-      modelHint: "Opus 4.8 · Cursor: Opus — smartest model for planning",
+      modelHint: "Fable 5 (high effort) or Opus 4.8 · Cursor: Fable/Opus — smartest model for planning",
       prompt: `Read ${featurePath}/phases/plan.md and follow it exactly: research this codebase and fill in ${featurePath}/PLAN.md and ${featurePath}/TASKS.md for the feature described there. Do not write code.`,
     },
     {
@@ -43,7 +47,7 @@ export function featurePhasePrompts(featurePath: string): PhasePrompt[] {
     {
       key: "review",
       title: "3. Review",
-      modelHint: "Opus 4.8 · Cursor: Opus — back to the smart model",
+      modelHint: "Fable 5 (high effort) or Opus 4.8 · Cursor: Fable/Opus — back to the smart model",
       prompt: `Read ${featurePath}/phases/review.md and follow it exactly: verify the implementation in this repo against ${featurePath}/PLAN.md, fix what's broken, and set the status to done.`,
     },
   ];
@@ -55,7 +59,7 @@ export function adoptPhasePrompts(featurePath: string): PhasePrompt[] {
     {
       key: "plan",
       title: "1. Plan",
-      modelHint: "Opus 4.8 · Cursor: Opus — smartest model for planning",
+      modelHint: "Fable 5 (high effort) or Opus 4.8 · Cursor: Fable/Opus — smartest model for planning",
       prompt: `Read ${featurePath}/phases/plan.md and follow it exactly: confirm the migration mapping and fill in ${featurePath}/PLAN.md and ${featurePath}/TASKS.md. Do not move files yet.`,
     },
     {
@@ -67,7 +71,7 @@ export function adoptPhasePrompts(featurePath: string): PhasePrompt[] {
     {
       key: "review",
       title: "3. Review",
-      modelHint: "Opus 4.8 · Cursor: Opus — back to the smart model",
+      modelHint: "Fable 5 (high effort) or Opus 4.8 · Cursor: Fable/Opus — back to the smart model",
       prompt: `Read ${featurePath}/phases/review.md and follow it exactly: verify the code only moved (no behaviour change), every doc and test is accounted for, the Docker setup works, then fix any breakage and set the status to done.`,
     },
   ];

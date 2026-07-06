@@ -37,6 +37,19 @@ The rest of \`.agents/\` and \`.docs/\` is read on demand, only what the current
   feature that has a folder here, read its STATUS.md and PLAN.md first
 - [.docs/](${at(".docs/")}) — architecture, ADRs, module map, and guides; read only the parts your change affects
 
+## Ground rules
+
+**Commands**
+- Never run dev server commands (e.g. \`npm run dev\`) — assume the dev server is already running.
+- Do not run build commands unless explicitly told to.
+
+**Code style**
+- Always strive for concise, simple solutions.
+- If a problem can be solved a simpler way, propose it.
+
+**General**
+- If a request asks for too much work at once, stop and state that clearly rather than attempting it all.
+
 ## Then follow the workflow
 
 Follow [.agents/AI_INSTRUCTIONS.md](${at(".agents/AI_INSTRUCTIONS.md")}) for the full working

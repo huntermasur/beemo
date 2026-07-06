@@ -44,8 +44,13 @@ Docker.
   prompts past a closed terminal; its implement prompt sits between
   `<!-- neptr:implement-prompts:start/end -->` markers, which the plan-phase agent
   replaces with one prompt per `## Milestone N` group when it splits large work in
-  TASKS.md (milestone rules live in the `phases/{plan,implement,review}.md`
-  templates, not in TS; adopt milestones default to the workstreams). Each
+  TASKS.md. The plan phase also picks the **session topology**: combined (plan +
+  implement in the plan session, small low-risk work on a High-tier model only —
+  it marks the implement block `**Topology:** combined` and the prompt becomes an
+  interruption fallback), single implement session (default), or milestone split;
+  review always runs in its own fresh session. Topology and milestone rules live
+  in the `phases/{plan,implement,review}.md` templates, not in TS; adopt
+  milestones default to the workstreams. Each
   `PhasePrompt.modelHint` seeds a `**Model:** …` line under its heading in
   `PROMPTS.md` (the implement one lives inside the markers); the plan-phase agent
   rewrites those lines per prompt/milestone from the complexity→model table
@@ -134,6 +139,18 @@ Docker.
   installs its SessionStart + pre-commit hooks — placed late in `STEPS` (before git) so
   the Key files table sees the MCP/Docker files, and `git.ts` then sets `core.hooksPath`)
 - `templates/` — every file generated into scaffolded projects; ships in the npm package
+
+## Working style
+- Act once you're confident: investigate, then commit. Don't re-derive settled facts,
+  re-litigate decided questions, or survey options you won't pursue — recommend one.
+- Stay in scope: no features, refactors, or abstractions beyond what the task needs,
+  and no error handling for scenarios that can't happen. When the user is describing
+  a problem or thinking out loud, the deliverable is your assessment — don't apply a
+  fix until they ask.
+- Prove your work: every "done" claim points to the code (file:line) or the command
+  output that shows it; report unverified work as unverified.
+- State decisions and their assumptions, not your thought process — don't reproduce
+  your internal reasoning in responses.
 
 ## Conventions
 - ESM only (`"type": "module"`); Node >= 20

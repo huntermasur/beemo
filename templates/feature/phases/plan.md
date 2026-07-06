@@ -58,27 +58,44 @@ You size every downstream prompt to its complexity and record the pick on its
    every task a recommended skill or MCP server applies to by ending its line with
    `(skill: <name>)` or `(MCP: <server>)`; the implementer treats those tags as
    instructions, not suggestions.
-8. Decide whether the feature needs **milestones**. Split when any of these
-   holds: TASKS.md has more than ~12 tasks; the tasks span 3+ unrelated areas of
-   the codebase; or an implementer would need more files in context than fits
-   one session (roughly 15+ files to read or change). If it fits one session,
-   do NOT split — leave TASKS.md flat and leave the block between the
-   `<!-- neptr:implement-prompts:start/end -->` markers in
-   [../PROMPTS.md](../PROMPTS.md) as one prompt (you still set its `**Model:**`
-   line in step 9). If splitting:
-   - Regroup TASKS.md under `## Milestone 1 — <name>`, `## Milestone 2 — <name>`,
-     … headings, in dependency order. Aim for 2–5 milestones, each sized to one
-     agent session. Every milestone must leave the project green (typecheck/
-     build/tests pass) and be independently verifiable — never split mid-task.
-   - In [../PROMPTS.md](../PROMPTS.md), replace everything **between**
-     `<!-- neptr:implement-prompts:start -->` and
-     `<!-- neptr:implement-prompts:end -->` (keep the marker lines) with one
-     block per milestone. Each block is a `### Milestone N — <name>` heading,
-     then a `**Model:** <pick from the Model guide> — <≤6-word reason>` line
-     (sized per step 9), then this exact prompt:
-     `Read {{featurePath}}/phases/implement.md and follow it exactly, scoped to Milestone N (<name>) only: implement that milestone's tasks per {{featurePath}}/PLAN.md, checking off TASKS.md and updating NOTES.md and STATUS.md as you go. Do not start other milestones.`
-   - Do not add per-milestone review prompts — there is one plan phase and one
-     final review phase.
+8. Decide the **session topology** — how the remaining work maps onto agent
+   sessions. Pick exactly one, in this order of preference:
+   - **Combined session** (plan + implement in *this* session): choose only when
+     ALL of these hold — TASKS.md has ~6 tasks or fewer; they touch one area of
+     the codebase; the work is low-risk (no new architecture, no
+     security-sensitive surface); and the model running this plan phase is
+     High-tier per the Model guide. Leave TASKS.md flat. In
+     [../PROMPTS.md](../PROMPTS.md), keep the single implement block between the
+     `<!-- neptr:implement-prompts:start/end -->` markers but insert this line
+     directly above its `**Model:**` line:
+     `**Topology:** combined — implement runs in the plan session after user approval; use this prompt only if that session was interrupted.`
+   - **Single implement session** (the default): the feature fits one fresh
+     implement session. Leave TASKS.md flat and leave the block between the
+     `<!-- neptr:implement-prompts:start/end -->` markers in
+     [../PROMPTS.md](../PROMPTS.md) as one prompt (you still set its `**Model:**`
+     line in step 9).
+   - **Milestone split**: split when the milestones would be independently
+     verifiable checkpoints worth having on their own, when the tasks span 3+
+     unrelated areas of the codebase, or when TASKS.md has more than ~12 tasks
+     (past that, per-milestone review is what keeps the work checkable). Context
+     size alone is a weak reason to split — agent sessions summarize and carry
+     on — so don't split merely because many files are in play. If splitting:
+     - Regroup TASKS.md under `## Milestone 1 — <name>`, `## Milestone 2 — <name>`,
+       … headings, in dependency order. Aim for 2–5 milestones, each sized to one
+       agent session. Every milestone must leave the project green (typecheck/
+       build/tests pass) and be independently verifiable — never split mid-task.
+     - In [../PROMPTS.md](../PROMPTS.md), replace everything **between**
+       `<!-- neptr:implement-prompts:start -->` and
+       `<!-- neptr:implement-prompts:end -->` (keep the marker lines) with one
+       block per milestone. Each block is a `### Milestone N — <name>` heading,
+       then a `**Model:** <pick from the Model guide> — <≤6-word reason>` line
+       (sized per step 9), then this exact prompt:
+       `Read {{featurePath}}/phases/implement.md and follow it exactly, scoped to Milestone N (<name>) only: implement that milestone's tasks per {{featurePath}}/PLAN.md, checking off TASKS.md and updating NOTES.md and STATUS.md as you go. Do not start other milestones.`
+     - Do not add per-milestone review prompts — there is one plan phase and one
+       final review phase.
+   Whatever the topology, the review phase always runs in its own fresh session —
+   never fold it into a plan or implement session; a cold reviewer catches what a
+   warm one anchors past.
 9. **Recommend a model for every prompt.** Using the Model guide above, set the
    `**Model:**` line on each prompt in [../PROMPTS.md](../PROMPTS.md) to the model
    that fits its complexity, with a short reason (≤6 words):
@@ -87,7 +104,8 @@ You size every downstream prompt to its complexity and record the pick on its
      an intricate one rise to High.
    - Review: usually High, but lower it if the change is small and self-contained.
    - Leave the Plan line as is — that prompt has already run.
-   Give the Claude Code model name; the reader maps it to their editor via the guide.
+   Give the Claude Code model name, plus the effort level from the guide when the
+   model exposes one (never above high); the reader maps it to their editor via the guide.
 
 ## Rules
 
@@ -95,12 +113,27 @@ You size every downstream prompt to its complexity and record the pick on its
   and MCP servers (steps 5–6) is allowed — that is tooling setup, not code.
 - Write for an implementer with less context than you: spell out paths, names,
   and edge cases.
+- Plan to the depth the implementer needs, then stop. Once you can answer the
+  questions the implementation will actually hit, write the plan — don't keep
+  researching for completeness's sake, and don't record surveys of approaches you
+  aren't recommending. One settled approach, its key assumptions, and its risks is
+  the deliverable.
+- Do NOT plan work the feature doesn't require: no refactors of adjacent code, no
+  abstractions for hypothetical future needs, no defensive handling for scenarios
+  that can't happen. Note tempting improvements under "Out of scope" instead.
 
 ## When done
 
 1. In [../STATUS.md](../STATUS.md), set the status line to `Status: planned` and
    append a log row.
-2. Stop. Tell the user the plan is ready for their review, and that the next
-   step is the implement phase (`{{featurePath}}/phases/implement.md`). If you
-   created milestones, say how many and that each implement prompt in
-   `{{featurePath}}/PROMPTS.md` runs in a fresh agent session, in order.
+2. Stop. Tell the user the plan is ready for their review, and what happens next
+   based on the topology you chose in step 8:
+   - **Combined session:** tell the user that once they approve the plan they can
+     reply "go" and you will continue implementing in this same session (read
+     `{{featurePath}}/phases/implement.md` and follow it exactly) — or they can
+     paste the implement prompt from `{{featurePath}}/PROMPTS.md` into a fresh
+     session later. Do not start implementing until they approve.
+   - **Single implement session:** the next step is the implement phase
+     (`{{featurePath}}/phases/implement.md`) in a fresh agent session.
+   - **Milestones:** say how many, and that each implement prompt in
+     `{{featurePath}}/PROMPTS.md` runs in a fresh agent session, in order.

@@ -61,9 +61,16 @@ You size every downstream prompt to its complexity and record the pick on its
     TASKS.md's workstream grouping as is and keep the block between the
     `<!-- neptr:implement-prompts:start/end -->` markers in
     [../PROMPTS.md](../PROMPTS.md) as one prompt (you still set its `**Model:**`
-    line in step 11). Milestones must be ordered so the project stays green after each
+    line in step 11). If the migration is that small **and** the model running
+    this plan phase is High-tier per the Model guide, you may go one step further
+    and choose the **combined session** topology — plan + implement in this same
+    session, started only after the user approves the plan. Then also insert this
+    line directly above that single implement block's `**Model:**` line:
+    `**Topology:** combined — implement runs in the plan session after user approval; use this prompt only if that session was interrupted.`
+    Milestones must be ordered so the project stays green after each
     one and each is independently verifiable (its workstream's verification
-    passes). If splitting:
+    passes). Whatever the topology, the review phase always runs in its own fresh
+    session — never fold it into a plan or implement session. If splitting:
     - Retitle the TASKS.md group headings as `## Milestone 1 — <name>`,
       `## Milestone 2 — <name>`, … in that order.
     - In [../PROMPTS.md](../PROMPTS.md), replace everything **between**
@@ -82,7 +89,8 @@ You size every downstream prompt to its complexity and record the pick on its
     env/migrations or an ambiguous code split is Medium–High. Set the review line
     (usually High, lower for a small migration) and, if you did not split, the
     single implement prompt's line. Leave the Plan line as is — it has already run.
-    Give the Claude Code model name; the reader maps it to their editor via the guide.
+    Give the Claude Code model name, plus the effort level from the guide when the
+    model exposes one (never above high); the reader maps it to their editor via the guide.
 
 ## Rules
 
@@ -96,12 +104,22 @@ You size every downstream prompt to its complexity and record the pick on its
   env var it already supports is fine; changing logic is not).
 - Do NOT move any files or write implementation changes in this phase.
 - If the right home for a file is genuinely ambiguous, ask the user rather than guess.
+  For everything else, decide once you're confident and record the decision — don't
+  keep re-checking mappings you've already verified or survey placements you aren't
+  recommending.
 
 ## When done
 
 1. In [../STATUS.md](../STATUS.md), set the status line to `Status: planned` and
    append a log row.
-2. Stop. Tell the user the plan is ready for review, and that the next step is the
-   implement phase (`{{featurePath}}/phases/implement.md`). If you created
-   milestones, say how many and that each implement prompt in
-   `{{featurePath}}/PROMPTS.md` runs in a fresh agent session, in order.
+2. Stop. Tell the user the plan is ready for review, and what happens next based
+   on the topology you chose in step 10:
+   - **Combined session:** tell the user that once they approve the plan they can
+     reply "go" and you will continue the migration in this same session (read
+     `{{featurePath}}/phases/implement.md` and follow it exactly) — or paste the
+     implement prompt from `{{featurePath}}/PROMPTS.md` into a fresh session
+     later. Do not move any files until they approve.
+   - **Single implement session:** the next step is the implement phase
+     (`{{featurePath}}/phases/implement.md`) in a fresh agent session.
+   - **Milestones:** say how many, and that each implement prompt in
+     `{{featurePath}}/PROMPTS.md` runs in a fresh agent session, in order.

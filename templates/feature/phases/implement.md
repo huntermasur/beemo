@@ -14,7 +14,10 @@ The plan phase already made the decisions — your job is to execute it faithful
      in all earlier milestones must be checked off.
    If the check fails, stop and tell the user which phase or milestone should
    run instead.
-3. Read [../PLAN.md](../PLAN.md) and [../TASKS.md](../TASKS.md) in full.
+3. Read [../PLAN.md](../PLAN.md) and [../TASKS.md](../TASKS.md) in full. If you
+   are running combined (the plan phase chose the combined topology and this is
+   the same session that planned), the status gate above still applies, but you
+   need not re-read files already in your context.
 4. The plan phase already downloaded the skills it recommends into
    `.agents/skills/`. Confirm each skill in the **Recommended skills** section of
    [../PLAN.md](../PLAN.md) is present, then re-read your `.agents/skills/` so the
@@ -38,7 +41,12 @@ The plan phase already made the decisions — your job is to execute it faithful
 
 - Follow the plan. Work through [../TASKS.md](../TASKS.md) in order (only your
   milestone's section on a milestone run); check off each item only after
-  verifying it works.
+  verifying it works — a checked box means you can point to the code that does it
+  and the command output that proved it, not that you remember writing it.
+- Stay inside the plan's scope. Do NOT add features, refactor, or introduce
+  abstractions beyond what a task requires, and do NOT add error handling or
+  validation for scenarios that can't happen. An improvement worth making goes in
+  [../NOTES.md](../NOTES.md) as follow-up, not into the diff.
 - **Use what the plan installed.** Before starting a task tagged
   `(skill: <name>)`, read `.agents/skills/<name>/SKILL.md` and follow its
   guidance for that task — the skill's approach overrides your habits. For a
@@ -75,4 +83,6 @@ The plan phase already made the decisions — your job is to execute it faithful
    wasn't — then set the status line to `Status: implemented` and append a log
    row.
 4. Stop. Tell the user implementation is complete and the next step is the
-   review phase (`{{featurePath}}/phases/review.md`).
+   review phase (`{{featurePath}}/phases/review.md`). Ground every claim in that
+   summary in evidence from this session — the files changed and the check output —
+   and label anything unverified as unverified rather than hedging.

@@ -3,7 +3,9 @@
 You are the reviewing agent for the adoption workspace at `{{featurePath}}/`.
 The migration should have changed *where* things live — code, tests, docs — and
 made the project runnable in containers, without changing *what the code does*.
-Verify exactly that, workstream by workstream.
+Verify exactly that, workstream by workstream. This phase must run in a fresh
+agent session — never in the session that planned or implemented, whatever
+topology the plan chose.
 
 ## Before you start
 
@@ -66,4 +68,6 @@ Verify exactly that, workstream by workstream.
 1. Set the status line in [../STATUS.md](../STATUS.md) to `Status: done` and
    append a log row.
 2. Summarize for the user: what moved, what was verified, what was fixed, and any
-   files deliberately left in place (and why).
+   files deliberately left in place (and why). Every claim must trace to something
+   you ran or read in this session — name the files and the commands whose output
+   backs it. Do not report as verified anything you didn't exercise yourself.
