@@ -25,24 +25,26 @@ _Not planned yet — the plan phase fills in everything below._
 
 ## Recommended skills
 
-<!-- Planning agent: reusable skills.sh skills that fit the approach, found with
-     `neptr skill "<keywords>" --search-only`. List only audit-passing skills.
-     "Use it for" names the concrete TASKS.md tasks the skill applies to — tag
-     those tasks with `(skill: <name>)`. The implementer runs each command below
-     in the implement phase; neptr skill re-checks the security audit and skips
-     anything that fails. Write "None needed." if nothing fits. -->
+<!-- Planning agent: reusable skills.sh skills that fit the approach — the plan
+     phase installs these itself with `neptr skill "<keywords>" --yes` (list only
+     audit-passing skills that actually installed). "Use it for" names the concrete
+     TASKS.md tasks the skill applies to — tag those tasks with `(skill: <name>)`.
+     Keep the install command for reference/reinstall. Also add each newly
+     installed skill to NOTES.md's "Installed for this feature" table so review can
+     remove it. Write "None needed." if nothing fits. -->
 
 | Skill | Use it for | Install command |
 | --- | --- | --- |
 
 ## Recommended MCP servers
 
-<!-- Planning agent: MCP servers from the official registry that fit the approach,
-     found with `neptr mcp "<keywords>" --search-only`. Prefer servers marked
-     `safe`. "Use it for" names the concrete TASKS.md tasks the server applies
-     to — tag those tasks with `(MCP: <server>)`. The implementer runs each
-     command below in the implement phase; neptr mcp re-runs the safety check and
-     adds only safe servers. Write "None needed." if nothing fits. -->
+<!-- Planning agent: MCP servers from the official registry that fit the approach —
+     the plan phase installs these itself with `neptr mcp "<keywords>" --yes`
+     (prefer servers marked `safe`; list only ones that actually installed). "Use
+     it for" names the concrete TASKS.md tasks the server applies to — tag those
+     tasks with `(MCP: <server>)`. Keep the install command for reference/reinstall.
+     Also add each newly installed server to NOTES.md's "Installed for this feature"
+     table so review can remove it. Write "None needed." if nothing fits. -->
 
 | Server | Use it for | Install command |
 | --- | --- | --- |

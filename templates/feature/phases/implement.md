@@ -15,28 +15,21 @@ The plan phase already made the decisions — your job is to execute it faithful
    If the check fails, stop and tell the user which phase or milestone should
    run instead.
 3. Read [../PLAN.md](../PLAN.md) and [../TASKS.md](../TASKS.md) in full.
-4. Install the skills the plan recommends. For each command in the **Recommended
-   skills** section of [../PLAN.md](../PLAN.md), run it from the project root (they
-   look like `neptr skill "…" --yes`). `neptr skill` re-runs the security audit and
-   installs only skills that pass, so anything that fails is skipped automatically.
-   Note which skills installed in [../NOTES.md](../NOTES.md), then re-read your
-   `.agents/skills/` so the new guidance is in context. The installed-skills
-   inventory in `.agents/CAPABILITIES.md` refreshes on the next `neptr index`; if a
-   new skill overlaps one already listed there, record which one wins in that file's
-   precedence list. Skip this step if the plan says "None needed" — or if an earlier
-   milestone already installed them (check [../NOTES.md](../NOTES.md) and skip what's installed).
-5. Install the MCP servers the plan recommends. For each command in the
-   **Recommended MCP servers** section of [../PLAN.md](../PLAN.md), run it from the
-   project root (they look like `neptr mcp "…" --yes`). `neptr mcp` re-runs the
-   safety check and adds only servers marked safe (version-pinned) to both
-   `.mcp.json` (for Claude) and `.cursor/mcp.json` (for Cursor), so anything unsafe
-   is skipped automatically. Any server that declares credentials/environment
-   variables needs them filled in by hand — note those and which servers installed
-   in [../NOTES.md](../NOTES.md), then restart your agent so it picks up the new MCP
-   config. The MCP inventory in `.agents/CAPABILITIES.md` refreshes on the next
-   `neptr index`; if a new server overlaps one already listed there, record which one
-   wins in that file's precedence list. Skip this step if the plan says "None
-   needed" — or if an earlier milestone already installed them (check NOTES.md).
+4. The plan phase already downloaded the skills it recommends into
+   `.agents/skills/`. Confirm each skill in the **Recommended skills** section of
+   [../PLAN.md](../PLAN.md) is present, then re-read your `.agents/skills/` so the
+   guidance is in context. If one is missing, install it by running its command
+   (`neptr skill "…" --yes`) from the project root and add it to the **Installed
+   for this feature** section of [../NOTES.md](../NOTES.md) so the review phase can
+   remove it. Skip this step if the plan says "None needed."
+5. The plan phase already added the MCP servers it recommends to `.mcp.json` and
+   `.cursor/mcp.json`. Confirm each server in the **Recommended MCP servers**
+   section of [../PLAN.md](../PLAN.md) is present, then restart your agent so it
+   picks up the MCP config. Any server that declares credentials/environment
+   variables needs them filled in by hand — do that and note it in
+   [../NOTES.md](../NOTES.md). If a server is missing, add it with its
+   `neptr mcp "…" --yes` command and record it in the **Installed for this feature**
+   section of NOTES.md. Skip this step if the plan says "None needed."
 6. Set the status line to `Status: implementing` (if it isn't already) and
    append a log row — for a milestone run, note it, e.g.
    `| <date> | implementing | Milestone 2 started |`.

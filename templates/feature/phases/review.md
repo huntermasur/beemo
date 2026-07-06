@@ -31,7 +31,20 @@ Assume nothing the implementer wrote is true until you have verified it.
 
 ## When done
 
-1. Set the status line in [../STATUS.md](../STATUS.md) to `Status: done` and
+1. **Remove the tooling this feature downloaded.** Read the **Installed for this
+   feature** section of [../NOTES.md](../NOTES.md) — it lists every skill and MCP
+   server the plan/implement phases installed for this work. Do this only after all
+   verification above is finished (you may need those tools to exercise the
+   feature). For each:
+   - Skill: delete its `.agents/skills/<name>/` directory.
+   - MCP server: remove its entry from **both** `.mcp.json` and `.cursor/mcp.json`,
+     leaving every other server untouched.
+   These were installed only to build the feature; the shipped code must not depend
+   on them. If the section is empty, skip this. Then run `neptr index` from the
+   project root so the CAPABILITIES.md inventory reflects the removals, re-run the
+   project's checks to confirm nothing broke, and log what you removed in
+   [../NOTES.md](../NOTES.md).
+2. Set the status line in [../STATUS.md](../STATUS.md) to `Status: done` and
    append a log row.
-2. Summarize for the user: what was verified, what was fixed, and any residual
-   risk or follow-up work.
+3. Summarize for the user: what was verified, what was fixed, what tooling was
+   removed, and any residual risk or follow-up work.

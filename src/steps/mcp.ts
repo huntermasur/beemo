@@ -12,29 +12,10 @@ const SERVER_CONFIGS: Record<McpServer, object> = {
     command: "npx",
     args: ["-y", "@upstash/context7-mcp"],
   },
-  docker: {
-    type: "stdio",
-    command: "docker",
-    args: ["mcp", "gateway", "run"],
-  },
-  github: {
-    type: "http",
-    url: "https://api.githubcopilot.com/mcp/",
-  },
-  memory: {
-    type: "stdio",
-    command: "npx",
-    args: ["-y", "@modelcontextprotocol/server-memory"],
-  },
   playwright: {
     type: "stdio",
     command: "npx",
     args: ["-y", "@playwright/mcp@latest"],
-  },
-  "sequential-thinking": {
-    type: "stdio",
-    command: "npx",
-    args: ["-y", "@modelcontextprotocol/server-sequential-thinking"],
   },
 };
 

@@ -28,10 +28,14 @@ Docker.
 - `src/feature.ts` — `neptr feature`: scaffolds a plan → implement → review workspace
   at `.docs/feature/<slug>/` in the current project (from `templates/feature/`)
   and prints per-phase copy-paste agent prompts; never calls an LLM itself. The plan
-  phase discovers reusable skills and MCP servers with `neptr skill --search-only`
-  and `neptr mcp --search-only`; the implement phase installs them with
-  `neptr skill --yes` / `neptr mcp --yes`. This discovery/install behavior lives in
-  the phase templates (`templates/feature/phases/*.md`), not in `feature.ts`.
+  phase both discovers **and installs** the reusable skills and MCP servers a feature
+  needs (`neptr skill --search-only` to survey, then `neptr skill --yes` /
+  `neptr mcp --yes` to download), recording each newly installed one in the
+  workspace's NOTES.md "Installed for this feature" table; the implement phase just
+  uses them; the review phase removes them when the feature is done (deletes
+  `.agents/skills/<name>/`, strips the server from `.mcp.json`/`.cursor/mcp.json`).
+  This discovery/install/cleanup behavior lives in the phase templates
+  (`templates/feature/phases/*.md`), not in `feature.ts`.
 - `src/phase-prompts.ts` — single source of truth for the copy-paste prompts of both
   `neptr feature` and `neptr adopt`: the same `PhasePrompt[]` data drives the console
   output (`printPhasePrompts`, plain `console.log` so copies don't capture clack

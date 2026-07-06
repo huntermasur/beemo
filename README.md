@@ -52,9 +52,10 @@ whose security audits **all pass**, and lets you pick any number to install into
 see skills with audit warnings or no audits yet (their status is shown inline).
 
 Two non-interactive modes drive the feature workflow: `--search-only` lists the
-audit-passing matches and installs nothing (used by the plan phase to discover
-skills), and `--yes` installs every shown skill without prompting (used by the
-implement phase to add the skills the plan recommended).
+audit-passing matches and installs nothing (used by the plan phase to survey
+skills), and `--yes` installs every shown skill without prompting. The plan phase
+uses both — it surveys, then downloads the skills a feature needs — and the review
+phase removes whatever it installed once the feature is done.
 
 ## Installing MCP servers
 
@@ -77,8 +78,9 @@ entries in either file are preserved, and servers that declare credentials are
 flagged so you can fill them in by hand.
 
 As with `neptr skill`, `--search-only` lists the safety-checked matches without
-installing (for the plan phase) and `--yes` adds every shown safe server without
-prompting (for the implement phase). Remote-only servers with no local package
+installing and `--yes` adds every shown safe server without prompting; the plan
+phase surveys then installs the servers a feature needs, and the review phase
+removes them when the feature is done. Remote-only servers with no local package
 are wired to their hosted endpoint; anything with no launch command is listed so
 you can configure it by hand.
 

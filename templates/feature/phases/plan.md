@@ -23,31 +23,40 @@ You size every downstream prompt to its complexity and record the pick on its
    touch, Risks & open questions, Out of scope. Be specific — name files,
    functions, and patterns. If something important is ambiguous, ask the user
    before finalizing the plan.
-5. Once the approach is settled, look for reusable skills. For each capability the
-   feature needs (a framework, a tricky integration, a well-known pattern), run
-   `neptr skill "<keywords>" --search-only` from the project root. This searches
-   [skills.sh](https://skills.sh) and lists only skills whose security audits pass —
-   it installs nothing. Record the ones worth using in the **Recommended skills**
-   section of [../PLAN.md](../PLAN.md), each with the exact `neptr skill "…" --yes`
-   command the implementer should run and the concrete tasks it should be used
-   for — a skill nobody is told when to use is a skill nobody uses. If nothing
-   fits, write "None needed."
-6. Look for helpful MCP servers the same way. For each external system the feature
-   talks to (a database, a browser, GitHub, a SaaS API, the filesystem…), run
-   `neptr mcp "<keywords>" --search-only` from the project root. This searches the
-   official MCP registry and lists each server with a safety checklist (verified
-   vendor, repo activity, access surface, local/Docker runnability, version
-   pinning) — it installs nothing. Record the servers worth using in the
-   **Recommended MCP servers** section of [../PLAN.md](../PLAN.md), each with the
-   exact `neptr mcp "…" --yes` command the implementer should run and the concrete
-   tasks it should be used for. Prefer servers marked `safe`. If nothing fits,
+5. Once the approach is settled, find **and install** the skills this feature
+   needs. For each capability the feature needs (a framework, a tricky
+   integration, a well-known pattern), run `neptr skill "<keywords>" --search-only`
+   from the project root to see the audit-passing candidates on
+   [skills.sh](https://skills.sh) (this installs nothing). Then download the ones
+   worth using by running `neptr skill "<keywords>" --yes` — it re-checks the
+   security audit and installs only passing skills into `.agents/skills/`. For
+   every skill you install, add a row to the **Recommended skills** section of
+   [../PLAN.md](../PLAN.md) with the concrete tasks it should be used for — a skill
+   nobody is told when to use is a skill nobody uses — and a row to the **Installed
+   for this feature** section of [../NOTES.md](../NOTES.md) so the review phase can
+   remove it when the feature is done (record only skills that were newly
+   downloaded — skip any already present in `.agents/skills/`). If nothing fits,
    write "None needed."
+6. Find **and install** the MCP servers the feature needs the same way. For each
+   external system the feature talks to (a database, a browser, GitHub, a SaaS API,
+   the filesystem…), run `neptr mcp "<keywords>" --search-only` from the project
+   root to see each candidate with its safety checklist (verified vendor, repo
+   activity, access surface, local/Docker runnability, version pinning; installs
+   nothing). Then add the ones worth using with `neptr mcp "<keywords>" --yes` — it
+   re-runs the safety check and adds only servers marked `safe` (version-pinned) to
+   both `.mcp.json` (for Claude) and `.cursor/mcp.json` (for Cursor). Prefer servers
+   marked `safe`. Any server that declares credentials/environment variables needs
+   them filled in by hand — note that in PLAN.md. For every server you add, record a
+   row in the **Recommended MCP servers** section of [../PLAN.md](../PLAN.md) with
+   the concrete tasks it should be used for, and a row in the **Installed for this
+   feature** section of [../NOTES.md](../NOTES.md) so the review phase can remove it.
+   If nothing fits, write "None needed."
 7. Rewrite [../TASKS.md](../TASKS.md) as an ordered checklist. Each task must be
    small, concrete, and independently verifiable, with enough detail that the
-   implementer never has to re-derive the approach. Include early tasks to
-   install the recommended skills and MCP servers (if any), and tag every task a
-   recommended skill or MCP server applies to by ending its line with
-   `(skill: <name>)` or `(MCP: <server>)` — the implementer treats those tags as
+   implementer never has to re-derive the approach. The recommended skills and MCP
+   servers are already installed, so do NOT add tasks to install them — instead tag
+   every task a recommended skill or MCP server applies to by ending its line with
+   `(skill: <name>)` or `(MCP: <server>)`; the implementer treats those tags as
    instructions, not suggestions.
 8. Decide whether the feature needs **milestones**. Split when any of these
    holds: TASKS.md has more than ~12 tasks; the tasks span 3+ unrelated areas of
@@ -82,7 +91,8 @@ You size every downstream prompt to its complexity and record the pick on its
 
 ## Rules
 
-- Do NOT write or change any implementation code in this phase.
+- Do NOT write or change any implementation code in this phase. Installing skills
+  and MCP servers (steps 5–6) is allowed — that is tooling setup, not code.
 - Write for an implementer with less context than you: spell out paths, names,
   and edge cases.
 

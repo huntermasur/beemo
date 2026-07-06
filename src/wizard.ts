@@ -17,18 +17,11 @@ import {
 import { bail, ensure } from "./prompts.js";
 
 /** Display label for each MCP server; defaults to the id when not listed here. */
-const MCP_LABELS: Partial<Record<McpServer, string>> = {
-  github: "git/github",
-  "sequential-thinking": "sequential thinking",
-};
+const MCP_LABELS: Partial<Record<McpServer, string>> = {};
 
 const MCP_HINTS: Record<McpServer, string> = {
   context7: "up-to-date library docs for the agent",
-  docker: "manage containers, images, and compose stacks",
-  github: "PRs, issues, and repo workflows",
-  memory: "persistent knowledge graph for the agent across sessions",
   playwright: "browser automation — let the agent drive your app",
-  "sequential-thinking": "structured step-by-step reasoning for complex problems",
 };
 
 /** Sentinel value for the "select all" row atop the skills multiselect. */
