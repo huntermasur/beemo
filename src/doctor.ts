@@ -1,6 +1,6 @@
 import pc from "picocolors";
-import { neptr } from "./theme.js";
 import { commandExists, run } from "./run.js";
+import { neptr } from "./theme.js";
 
 interface Check {
   name: string;
@@ -11,7 +11,10 @@ interface Check {
 async function versionOf(command: string): Promise<{ ok: boolean; detail: string }> {
   try {
     const res = await run(command, ["--version"], { stdio: "pipe", timeout: 15_000 });
-    const out = String(res.stdout ?? "").trim().split("\n")[0] ?? "";
+    const out =
+      String(res.stdout ?? "")
+        .trim()
+        .split("\n")[0] ?? "";
     return { ok: true, detail: out };
   } catch {
     return { ok: false, detail: "not found" };

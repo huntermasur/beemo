@@ -76,7 +76,9 @@ export function suggestSection(relPath: string): { section: string; why: string 
   // tokens (aws, s3) would false-positive as bare substrings (`laws/`, `css3`),
   // so they must sit at a word start and not run into more lowercase/digits.
   const vendor =
-    /(stripe|discord|openai|anthropic|github|gitlab|twilio|sendgrid|firebase|supabase|auth0|slack|shopify)/.exec(lower) ??
+    /(stripe|discord|openai|anthropic|github|gitlab|twilio|sendgrid|firebase|supabase|auth0|slack|shopify)/.exec(
+      lower,
+    ) ??
     // No /i flag: the token letters cover their own cases so the trailing
     // lookahead stays case-sensitive and a camel hump (awsClient) counts as
     // a word end while more lowercase (laws) does not.
@@ -329,8 +331,7 @@ export function detectDocker(root: string, pkg: Record<string, unknown>): Docker
   // App port: .env → .env.example → scripts → primary framework default → 3000.
   const scripts = (pkg.scripts as Record<string, string>) ?? {};
   const primary = services.find((s) => s.kind === "server");
-  let appPort =
-    portFromEnvFile(path.join(root, ".env")) ?? portFromEnvFile(path.join(root, ".env.example"));
+  let appPort = portFromEnvFile(path.join(root, ".env")) ?? portFromEnvFile(path.join(root, ".env.example"));
   if (appPort === undefined) {
     for (const cmd of Object.values(scripts)) {
       const m = /(?:--port[= ]|-p )(\d+)/.exec(cmd);
@@ -519,10 +520,10 @@ export function suggestTestTarget(relPath: string, srcFiles: Map<string, string>
   if (lower.startsWith("src/")) {
     return { target: "stays co-located", why: "moves with its source file in the code workstream" };
   }
-  if (/(^|\/)(e2e|integration|acceptance|cypress|playwright)([\/._-]|$)/.test(lower)) {
+  if (/(^|\/)(e2e|integration|acceptance|cypress|playwright)([/._-]|$)/.test(lower)) {
     return { target: "`tests/`", why: "cross-cutting suite" };
   }
-  if (/(^|\/)(fixtures?|mocks?|__mocks__|helpers?|setup|utils)([\/._-]|$)/.test(lower)) {
+  if (/(^|\/)(fixtures?|mocks?|__mocks__|helpers?|setup|utils)([/._-]|$)/.test(lower)) {
     return { target: "`tests/`", why: "shared helper/fixture" };
   }
 
@@ -613,9 +614,10 @@ export function buildTestsInventory(root: string, pkg: Record<string, unknown>):
  */
 export function buildEnvInventory(root: string): string {
   const envFiles = walkRootMatches(root, /^\.env(\..+)?$/).map((f) => path.basename(f));
-  const configFiles = walkRootMatches(root, /^(vite|vitest|jest|playwright|cypress|drizzle|tailwind|postcss|eslint)\.config\.[^.]+$|^tsconfig(\..+)?\.json$|^\.eslintrc(\..+)?$/).map(
-    (f) => path.basename(f),
-  );
+  const configFiles = walkRootMatches(
+    root,
+    /^(vite|vitest|jest|playwright|cypress|drizzle|tailwind|postcss|eslint)\.config\.[^.]+$|^tsconfig(\..+)?\.json$|^\.eslintrc(\..+)?$/,
+  ).map((f) => path.basename(f));
 
   const parts: string[] = [];
   if (envFiles.length === 0) {
@@ -625,9 +627,9 @@ export function buildEnvInventory(root: string): string {
     const example = path.join(root, ".env.example");
     if (fs.existsSync(example)) {
       try {
-        const names = [...fs.readFileSync(example, "utf8").matchAll(/^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=/gm)].map(
-          (m) => m[1],
-        );
+        const names = [
+          ...fs.readFileSync(example, "utf8").matchAll(/^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=/gm),
+        ].map((m) => m[1]);
         if (names.length) {
           parts.push(
             "",
@@ -638,9 +640,15 @@ export function buildEnvInventory(root: string): string {
         /* unreadable example */
       }
     } else {
-      parts.push("", "No `.env.example` found — create one in the Docker workstream so required variables are documented without values.");
+      parts.push(
+        "",
+        "No `.env.example` found — create one in the Docker workstream so required variables are documented without values.",
+      );
     }
-    parts.push("", "Document each variable in `.docs/environment.md` (name, purpose, where to get it — never the value).");
+    parts.push(
+      "",
+      "Document each variable in `.docs/environment.md` (name, purpose, where to get it — never the value).",
+    );
   }
 
   if (configFiles.length) {

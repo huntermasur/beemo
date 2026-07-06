@@ -1,0 +1,3 @@
+# Templates ship verbatim into scaffolded projects (and into the npm package),
+# so keep them LF regardless of the checkout machine's autocrlf setting.
+templates/** text eol=lf

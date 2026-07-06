@@ -1,16 +1,16 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
-  detectDocker,
   buildDockerInventory,
-  suggestDocTarget,
   buildDocsInventory,
-  suggestTestTarget,
-  buildTestsInventory,
   buildEnvInventory,
+  buildTestsInventory,
+  detectDocker,
   detectWorkspaces,
+  suggestDocTarget,
+  suggestTestTarget,
 } from "../src/adopt-scan.js";
 
 let dir: string;

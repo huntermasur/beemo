@@ -1,5 +1,5 @@
-import { installIndexing } from "../indexer.js";
 import type { NEPTRConfig } from "../config.js";
+import { installIndexing } from "../indexer.js";
 
 /**
  * Generates the initial repo index and wires up its auto-maintenance:

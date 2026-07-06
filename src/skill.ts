@@ -2,8 +2,8 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { bail, ensure } from "./prompts.js";
 import { run } from "./run.js";
+import { gatherCandidates, isSafeInstallArg, type SecurityVerdict, type SkillCandidate } from "./skills-registry.js";
 import { neptr } from "./theme.js";
-import { gatherCandidates, isSafeInstallArg, type SkillCandidate, type SecurityVerdict } from "./skills-registry.js";
 
 export interface SkillFlags {
   minInstalls?: string;
@@ -38,21 +38,31 @@ export function formatInstalls(n: number): string {
  * phase (`--search-only`) so a planning agent can discover reusable skills and
  * record the exact install commands, without touching the project.
  */
-function reportSearchOnly(term: string, shown: SkillCandidate[], total: number, includeUnverified: boolean, auditsUnavailable: boolean): void {
+function reportSearchOnly(
+  term: string,
+  shown: SkillCandidate[],
+  total: number,
+  includeUnverified: boolean,
+  auditsUnavailable: boolean,
+): void {
   if (shown.length === 0) {
     neptr.warn(
       auditsUnavailable
         ? `Found ${total} match(es) for "${term}", but NEPTR could not fetch their security audits ` +
-          `(skills.sh may be rate-limiting). Wait a minute and retry, or use --include-unverified to list them anyway.`
+            `(skills.sh may be rate-limiting). Wait a minute and retry, or use --include-unverified to list them anyway.`
         : `Found ${total} match(es) for "${term}", but none have passed every security audit yet. ` +
-          `Re-run with --include-unverified to list them with their audit status.`,
+            `Re-run with --include-unverified to list them with their audit status.`,
     );
     return;
   }
   // Plain console.log (no clack gutter) so the list is easy to copy and parse.
-  console.log(pc.bold(`\nSkills matching "${term}" (${includeUnverified ? "all audits shown" : "audit-passing only"}):\n`));
+  console.log(
+    pc.bold(`\nSkills matching "${term}" (${includeUnverified ? "all audits shown" : "audit-passing only"}):\n`),
+  );
   for (const c of shown) {
-    console.log(`${verdictBadge(c.verdict)}  ${pc.bold(c.name)}  ${pc.dim(`${formatInstalls(c.installs)} installs · ${c.source}`)}`);
+    console.log(
+      `${verdictBadge(c.verdict)}  ${pc.bold(c.name)}  ${pc.dim(`${formatInstalls(c.installs)} installs · ${c.source}`)}`,
+    );
     // The exact owner/repo@slug, not the display name — re-searching by name
     // at implement time could resolve to a different skill.
     console.log(`   install: ${pc.green(`neptr skill "${c.installArg}" --yes`)}\n`);
@@ -130,7 +140,9 @@ export async function runSkill(query: string | undefined, flags: SkillFlags): Pr
   // resolve to a different skill at implement time.
   if (isSafeInstallArg(term) && !flags.searchOnly) {
     if (!flags.yes) {
-      const go = ensure(await p.confirm({ message: `Install ${pc.bold(term)} into this project?`, initialValue: true }));
+      const go = ensure(
+        await p.confirm({ message: `Install ${pc.bold(term)} into this project?`, initialValue: true }),
+      );
       if (!go) bail();
     }
     const spin = p.spinner();
@@ -182,9 +194,9 @@ export async function runSkill(query: string | undefined, flags: SkillFlags): Pr
     neptr.warn(
       auditsUnavailable
         ? `Found ${candidates.length} match(es), but NEPTR could not fetch their security audits ` +
-          `(skills.sh may be rate-limiting). Wait a minute and retry, or use --include-unverified to see them anyway.`
+            `(skills.sh may be rate-limiting). Wait a minute and retry, or use --include-unverified to see them anyway.`
         : `Found ${candidates.length} match(es), but none have passed every security audit yet. ` +
-          `Re-run with --include-unverified to see them (and their audit status).`,
+            `Re-run with --include-unverified to see them (and their audit status).`,
     );
     p.outro("Pie tin stays empty — nothing installed.");
     return;

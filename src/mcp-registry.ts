@@ -68,9 +68,7 @@ export interface Check {
 export type Verdict = "safe" | "caution" | "avoid";
 
 /** A `.mcp.json` server entry NEPTR can write for a selected server. */
-export type McpServerConfig =
-  | { type: "stdio"; command: string; args: string[] }
-  | { type: "http"; url: string };
+export type McpServerConfig = { type: "stdio"; command: string; args: string[] } | { type: "http"; url: string };
 
 /** The result of verifying one server: the checklist plus the rolled-up verdict. */
 export interface Verification {
@@ -101,7 +99,7 @@ async function fetchJson(
       headers: { "user-agent": "neptr-cli", accept: "application/json", ...headers },
     });
     const text = await res.text();
-    let json: unknown = undefined;
+    let json: unknown;
     try {
       json = JSON.parse(text);
     } catch {
@@ -195,7 +193,11 @@ function toRegistryServer(raw: unknown): RegistryServer | null {
  * Search the MCP registry for servers matching `query`. Throws on a non-200
  * response or malformed JSON so the caller can report it.
  */
-export async function searchMcpServers(query: string, limit: number, fetchImpl: FetchLike = fetch): Promise<RegistryServer[]> {
+export async function searchMcpServers(
+  query: string,
+  limit: number,
+  fetchImpl: FetchLike = fetch,
+): Promise<RegistryServer[]> {
   const url = `${BASE}/v0/servers?search=${encodeURIComponent(query)}&version=latest&limit=${Math.max(1, limit)}`;
   const { status, json } = await fetchJson(url, fetchImpl);
   if (status !== 200) {
@@ -232,7 +234,8 @@ export function deriveServerConfig(server: RegistryServer): McpServerConfig | nu
     const pinned = pkg.version ? `${pkg.identifier}@${pkg.version}` : pkg.identifier;
     if (pkg.registryType === "npm") return { type: "stdio", command: "npx", args: ["-y", pinned] };
     if (pkg.registryType === "pypi") return { type: "stdio", command: "uvx", args: [pinned] };
-    if (pkg.registryType === "oci") return { type: "stdio", command: "docker", args: ["run", "-i", "--rm", pkg.identifier] };
+    if (pkg.registryType === "oci")
+      return { type: "stdio", command: "docker", args: ["run", "-i", "--rm", pkg.identifier] };
   }
   const remote = server.remotes[0];
   if (remote) return { type: "http", url: remote.url };
@@ -347,7 +350,12 @@ export function checkVersionPin(server: RegistryServer): Check {
   if (pkg?.version) {
     return { id: "version", label: "Version pinning", status: "ok", detail: `pinned to ${pkg.version}` };
   }
-  return { id: "version", label: "Version pinning", status: "warn", detail: "no concrete version — would track latest" };
+  return {
+    id: "version",
+    label: "Version pinning",
+    status: "warn",
+    detail: "no concrete version — would track latest",
+  };
 }
 
 /** GitHub repo facts used for the activity/issues criteria. */
@@ -365,13 +373,24 @@ const BUSY_ISSUE_COUNT = 150;
 /** Criterion 2 — recent commits/releases (archived is a hard fail signal). */
 export function checkActivity(activity: RepoActivity | null): Check {
   if (!activity) return { id: "activity", label: "Repo activity", status: "unknown", detail: "could not reach GitHub" };
-  if (activity.archived) return { id: "activity", label: "Repo activity", status: "warn", detail: "repository is archived" };
+  if (activity.archived)
+    return { id: "activity", label: "Repo activity", status: "warn", detail: "repository is archived" };
   if (!activity.pushedAt) return { id: "activity", label: "Repo activity", status: "unknown", detail: "no push date" };
   const ageMs = Date.now() - new Date(activity.pushedAt).getTime();
   if (Number.isFinite(ageMs) && ageMs > STALE_AFTER_MS) {
-    return { id: "activity", label: "Repo activity", status: "warn", detail: `no push in over a year (${activity.pushedAt.slice(0, 10)})` };
+    return {
+      id: "activity",
+      label: "Repo activity",
+      status: "warn",
+      detail: `no push in over a year (${activity.pushedAt.slice(0, 10)})`,
+    };
   }
-  return { id: "activity", label: "Repo activity", status: "ok", detail: `last push ${activity.pushedAt.slice(0, 10)}` };
+  return {
+    id: "activity",
+    label: "Repo activity",
+    status: "ok",
+    detail: `last push ${activity.pushedAt.slice(0, 10)}`,
+  };
 }
 
 /** Criterion 3 — a large open-issue backlog that may signal poor maintenance. */
@@ -489,7 +508,9 @@ export interface GatherMcpOptions {
 export async function gatherMcpCandidates(query: string, options: GatherMcpOptions): Promise<McpCandidate[]> {
   const fetchImpl = options.fetchImpl ?? fetch;
   const servers = await searchMcpServers(query, options.limit, fetchImpl);
-  const activities = await mapPool(servers, 4, (s) => fetchRepoActivity(s.repositoryUrl, fetchImpl, options.githubToken));
+  const activities = await mapPool(servers, 4, (s) =>
+    fetchRepoActivity(s.repositoryUrl, fetchImpl, options.githubToken),
+  );
   return servers.map((server, i) => ({
     ...server,
     verification: verifyServer(server, activities[i] ?? null),

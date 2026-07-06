@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { adoptPhasePrompts, featurePhasePrompts, phasePromptVars } from "../src/phase-prompts.js";
-import { TEMPLATES_DIR, renderString } from "../src/template.js";
+import { renderString, TEMPLATES_DIR } from "../src/template.js";
 
 const FEATURE_PATH = ".docs/feature/test-slug";
 

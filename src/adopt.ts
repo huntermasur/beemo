@@ -1,22 +1,8 @@
-import * as p from "@clack/prompts";
 import fs from "node:fs";
 import path from "node:path";
+import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { adoptPhasePrompts, phasePromptVars, printPhasePrompts } from "./phase-prompts.js";
-import { bail, ensure } from "./prompts.js";
-import { renderDir, renderFile } from "./template.js";
-import { templateVars } from "./steps/ai-docs.js";
-import { writeAgentInstructions } from "./steps/agents.js";
-import { installIndexing } from "./indexer.js";
-import { neptr } from "./theme.js";
-import {
-  AGENT_IDS,
-  DEFAULTS,
-  VITE_TEMPLATES,
-  type NEPTRConfig,
-  type ViteTemplate,
-} from "./config.js";
-import { slugify } from "./feature.js";
+import { type DockerDraftResult, writeDockerDrafts } from "./adopt-docker.js";
 import {
   buildDockerInventory,
   buildDocsInventory,
@@ -26,7 +12,15 @@ import {
   detectDocker,
   detectWorkspaces,
 } from "./adopt-scan.js";
-import { writeDockerDrafts, type DockerDraftResult } from "./adopt-docker.js";
+import { AGENT_IDS, DEFAULTS, type NEPTRConfig, VITE_TEMPLATES, type ViteTemplate } from "./config.js";
+import { slugify } from "./feature.js";
+import { installIndexing } from "./indexer.js";
+import { adoptPhasePrompts, phasePromptVars, printPhasePrompts } from "./phase-prompts.js";
+import { bail, ensure } from "./prompts.js";
+import { writeAgentInstructions } from "./steps/agents.js";
+import { templateVars } from "./steps/ai-docs.js";
+import { renderDir, renderFile } from "./template.js";
+import { neptr } from "./theme.js";
 
 export interface AdoptFlags {
   /** Slug for the migration workspace folder (default: adopt-neptr-layout). */
@@ -78,9 +72,7 @@ export function inferTemplate(root: string, pkg: Record<string, unknown>): ViteT
   else if (has("@builder.io/qwik")) base = "qwik";
 
   const candidate = `${base}${suffix}`;
-  return (VITE_TEMPLATES as readonly string[]).includes(candidate)
-    ? (candidate as ViteTemplate)
-    : "vanilla-ts";
+  return (VITE_TEMPLATES as readonly string[]).includes(candidate) ? (candidate as ViteTemplate) : "vanilla-ts";
 }
 
 /** A NEPTRConfig good enough to render the .agents/.docs templates for an existing project. */
@@ -141,7 +133,10 @@ export async function runAdopt(flags: AdoptFlags): Promise<void> {
     if (flags.agents === "none" || flags.agents.trim() === "") {
       agents = [];
     } else {
-      agents = flags.agents.split(",").map((s) => s.trim()).filter(Boolean);
+      agents = flags.agents
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
       for (const id of agents) {
         if (!AGENT_IDS.includes(id)) {
           throw new Error(`Unknown agent "${id}". Valid options: ${AGENT_IDS.join(", ")}`);
@@ -159,7 +154,9 @@ export async function runAdopt(flags: AdoptFlags): Promise<void> {
   // workstream found; the results feed NOTES.md and the Docker drafts.
   const monorepo = detectWorkspaces(root, pkg);
   if (monorepo) {
-    neptr.warn(`Workspace/monorepo markers found (${monorepo}) — NEPTR's layout applies per package; adopt scans the repo root only.`);
+    neptr.warn(
+      `Workspace/monorepo markers found (${monorepo}) — NEPTR's layout applies per package; adopt scans the repo root only.`,
+    );
   }
   const docsInventory = flags.docs === false ? skipNote("--no-docs") : buildDocsInventory(root);
   const testsInventory = flags.tests === false ? skipNote("--no-tests") : buildTestsInventory(root, pkg);
@@ -232,7 +229,9 @@ export async function runAdopt(flags: AdoptFlags): Promise<void> {
       spin.stop(`${pc.green("✔")} Built the code index + hooks`);
     } catch (err) {
       spin.stop(`${pc.yellow("▲")} Index step skipped`);
-      neptr.warn(`Could not build the index (run \`neptr index --setup\` later): ${err instanceof Error ? err.message : String(err)}`);
+      neptr.warn(
+        `Could not build the index (run \`neptr index --setup\` later): ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
   }
 
@@ -249,7 +248,9 @@ export async function runAdopt(flags: AdoptFlags): Promise<void> {
       try {
         drafts = writeDockerDrafts(root, config.projectName, pkg, dockerScan);
         created.push(...drafts.written);
-        spin.stop(`${pc.green("✔")} Drafted ${drafts.written.join(", ") || "nothing new"} (DRAFT — the agent verifies)`);
+        spin.stop(
+          `${pc.green("✔")} Drafted ${drafts.written.join(", ") || "nothing new"} (DRAFT — the agent verifies)`,
+        );
       } catch (err) {
         noDraftReason = `drafting failed: ${err instanceof Error ? err.message : String(err)}`;
         spin.stop(`${pc.yellow("▲")} Docker draft step skipped`);
@@ -302,7 +303,9 @@ export async function runAdopt(flags: AdoptFlags): Promise<void> {
     printPhasePrompts(prompts, featurePath);
   } else {
     console.log(
-      pc.dim("Scaffolding retrofitted. Run `neptr adopt` without --no-plan to also generate the migration workspace.\n"),
+      pc.dim(
+        "Scaffolding retrofitted. Run `neptr adopt` without --no-plan to also generate the migration workspace.\n",
+      ),
     );
   }
   neptr.say("One layer at a time, like a well-structured pie!");

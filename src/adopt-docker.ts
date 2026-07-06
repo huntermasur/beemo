@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import { TEMPLATES_DIR, renderString, type TemplateVars } from "./template.js";
 import type { DetectedService, DockerScan } from "./adopt-scan.js";
+import { renderString, TEMPLATES_DIR, type TemplateVars } from "./template.js";
 
 /**
  * Draft Docker file generation for `neptr adopt` (the deterministic half of the

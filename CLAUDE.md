@@ -13,7 +13,10 @@ Docker.
 
 ## Commands
 - `npm run build` — bundle `src/cli.ts` to `dist/cli.js` via tsup
-- `npm run typecheck` — tsc --noEmit (run before committing)
+- `npm run check` — typecheck + lint + tests in one go (run before committing)
+- `npm run typecheck` — tsc --noEmit
+- `npm run lint` / `npm run lint:fix` — Biome lint + format (`biome.json`; templates/ and dist/ excluded)
+- `npm test` — vitest suite in `test/`
 - `npm link` — make the `neptr` command available globally for testing
 - Test scaffolds go in a throwaway directory (scratchpad), never inside this repo
 

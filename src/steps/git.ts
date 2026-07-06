@@ -1,7 +1,7 @@
-import path from "node:path";
 import fs from "node:fs";
-import { commandExists, run } from "../run.js";
+import path from "node:path";
 import type { NEPTRConfig } from "../config.js";
+import { commandExists, run } from "../run.js";
 
 const EXTRA_IGNORES = `
 # NEPTR additions
@@ -27,7 +27,7 @@ export async function gitStep(config: NEPTRConfig): Promise<void> {
   const existing = fs.existsSync(gitignorePath) ? fs.readFileSync(gitignorePath, "utf8") : "";
   if (!existing.includes("# NEPTR additions")) {
     const base = existing.trimEnd();
-    fs.writeFileSync(gitignorePath, (base ? base + "\n\n" : "") + EXTRA_IGNORES.trimStart());
+    fs.writeFileSync(gitignorePath, (base ? `${base}\n\n` : "") + EXTRA_IGNORES.trimStart());
   }
 
   const opts = { cwd: config.targetDir, stdio: "pipe" as const, timeout: 60_000 };

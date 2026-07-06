@@ -69,14 +69,42 @@ export interface SkillChoice {
 }
 
 export const CURATED_SKILLS: SkillChoice[] = [
-  { installArg: "vercel-labs/agent-browser@agent-browser", name: "agent-browser", hint: "browser automation for agents" },
-  { installArg: "anthropics/skills", name: "anthropics/skills (all)", hint: "installs Anthropic's full official skill collection (frontend-design & ~15 more)" },
-  { installArg: "vercel-labs/skills@find-skills", name: "find-skills", hint: "lets your agent discover and install more skills" },
+  {
+    installArg: "vercel-labs/agent-browser@agent-browser",
+    name: "agent-browser",
+    hint: "browser automation for agents",
+  },
+  {
+    installArg: "anthropics/skills",
+    name: "anthropics/skills (all)",
+    hint: "installs Anthropic's full official skill collection (frontend-design & ~15 more)",
+  },
+  {
+    installArg: "vercel-labs/skills@find-skills",
+    name: "find-skills",
+    hint: "lets your agent discover and install more skills",
+  },
   { installArg: "mattpocock/skills@grill-me", name: "grill-me", hint: "brutally honest code review" },
-  { installArg: "pbakaus/impeccable@impeccable", name: "impeccable", hint: "polish UI to a pixel-perfect, production-ready finish" },
-  { installArg: "mattpocock/skills@improve-codebase-architecture", name: "improve-codebase-architecture", hint: "reviews and improves codebase architecture" },
-  { installArg: "vercel-labs/agent-skills@vercel-react-best-practices", name: "vercel-react-best-practices", hint: "React/Next.js best practices" },
-  { installArg: "vercel-labs/agent-skills@web-design-guidelines", name: "web-design-guidelines", hint: "audits UI for accessibility, performance, and UX best practices" },
+  {
+    installArg: "pbakaus/impeccable@impeccable",
+    name: "impeccable",
+    hint: "polish UI to a pixel-perfect, production-ready finish",
+  },
+  {
+    installArg: "mattpocock/skills@improve-codebase-architecture",
+    name: "improve-codebase-architecture",
+    hint: "reviews and improves codebase architecture",
+  },
+  {
+    installArg: "vercel-labs/agent-skills@vercel-react-best-practices",
+    name: "vercel-react-best-practices",
+    hint: "React/Next.js best practices",
+  },
+  {
+    installArg: "vercel-labs/agent-skills@web-design-guidelines",
+    name: "web-design-guidelines",
+    hint: "audits UI for accessibility, performance, and UX best practices",
+  },
 ];
 
 export interface NEPTRConfig {
@@ -131,7 +159,10 @@ export function validateProjectName(name: string): string | undefined {
 /** Split a comma-separated flag into trimmed items; "" and "none" mean empty. */
 function splitFlag(raw: string): string[] {
   if (raw.trim() === "" || raw === "none") return [];
-  return raw.split(",").map((s) => s.trim()).filter(Boolean);
+  return raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
 
 function parseList<T extends string>(raw: string | undefined, allowed: readonly T[], label: string): T[] | undefined {

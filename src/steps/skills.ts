@@ -1,5 +1,5 @@
-import { run } from "../run.js";
 import type { NEPTRConfig } from "../config.js";
+import { run } from "../run.js";
 
 /**
  * Install each selected skills.sh skill via `npx skills add`. Failures are

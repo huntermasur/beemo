@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { configFromFlags, validateProjectName, withDefaults, DEFAULTS } from "../src/config.js";
+import { configFromFlags, DEFAULTS, validateProjectName, withDefaults } from "../src/config.js";
 
 describe("validateProjectName", () => {
   it("accepts lowercase names with dots, dashes and underscores", () => {

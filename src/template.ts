@@ -51,15 +51,9 @@ export function renderFile(
 }
 
 /** Recursively render every file in a template directory into destDir. */
-export function renderDir(
-  templateRelDir: string,
-  destDir: string,
-  vars: TemplateVars,
-  opts: RenderOptions = {},
-): void {
+export function renderDir(templateRelDir: string, destDir: string, vars: TemplateVars, opts: RenderOptions = {}): void {
   const srcDir = path.join(TEMPLATES_DIR, templateRelDir);
   for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
-    const srcPath = path.join(srcDir, entry.name);
     const destPath = path.join(destDir, entry.name);
     if (entry.isDirectory()) {
       renderDir(path.join(templateRelDir, entry.name), destPath, vars, opts);

@@ -1,20 +1,20 @@
-import * as p from "@clack/prompts";
-import path from "node:path";
 import fs from "node:fs";
+import path from "node:path";
+import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { bail, ensure } from "./prompts.js";
 import {
   AGENT_CHOICES,
   CURATED_SKILLS,
   DEFAULTS,
   MCP_SERVERS,
+  type McpServer,
+  type NEPTRConfig,
   VITE_TEMPLATES,
+  type ViteTemplate,
   validateProjectName,
   withDefaults,
-  type NEPTRConfig,
-  type McpServer,
-  type ViteTemplate,
 } from "./config.js";
+import { bail, ensure } from "./prompts.js";
 
 /** Display label for each MCP server; defaults to the id when not listed here. */
 const MCP_LABELS: Partial<Record<McpServer, string>> = {

@@ -1,6 +1,6 @@
-import * as p from "@clack/prompts";
 import fs from "node:fs";
 import path from "node:path";
+import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { featurePhasePrompts, phasePromptVars, printPhasePrompts } from "./phase-prompts.js";
 import { bail, ensure } from "./prompts.js";
@@ -47,7 +47,8 @@ export async function runFeature(description: string | undefined, flags: Feature
   if (!fs.existsSync(agentsDir) && !flags.yes) {
     const go = ensure(
       await p.confirm({
-        message: "No .agents/ hub here — this doesn't look like a NEPTR project. Create just .docs/feature/ and continue?",
+        message:
+          "No .agents/ hub here — this doesn't look like a NEPTR project. Create just .docs/feature/ and continue?",
         initialValue: true,
       }),
     );

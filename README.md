@@ -162,5 +162,12 @@ keeping context (and token spend) small.
 
 ## Development
 
+```bash
+npm run check      # typecheck + lint + tests in one go (run before committing)
+npm run typecheck  # tsc --noEmit
+npm run lint       # Biome lint + format check (lint:fix to apply)
+npm test           # vitest suite
+```
+
 See [CLAUDE.md](CLAUDE.md) for architecture and conventions, and
 [TASKS.md](TASKS.md) for the milestone checklist.

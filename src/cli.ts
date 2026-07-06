@@ -1,33 +1,34 @@
 import { createRequire } from "node:module";
-import { Command } from "commander";
 import * as p from "@clack/prompts";
+import { Command } from "commander";
 import pc from "picocolors";
-import { NEPTR_BANNER, neptr, randomQuote } from "./theme.js";
+import { type AdoptFlags, runAdopt } from "./adopt.js";
 import { configFromFlags, type NEPTRConfig, type NewFlags } from "./config.js";
-import { runWizard } from "./wizard.js";
-import type { StepResult } from "./run.js";
-import { viteStep } from "./steps/vite.js";
-import { srcLayoutStep } from "./steps/src-layout.js";
-import { aiDocsStep } from "./steps/ai-docs.js";
-import { agentsStep } from "./steps/agents.js";
-import { mcpStep } from "./steps/mcp.js";
-import { dockerStep } from "./steps/docker.js";
-import { installStep } from "./steps/install.js";
-import { skillsStep } from "./steps/skills.js";
-import { envStep } from "./steps/env.js";
-import { indexingStep } from "./steps/indexing.js";
-import { gitStep } from "./steps/git.js";
-import { commandExists, run } from "./run.js";
 import { doctor } from "./doctor.js";
-import { runAdopt, type AdoptFlags } from "./adopt.js";
-import { runFeature, type FeatureFlags } from "./feature.js";
+import { type FeatureFlags, runFeature } from "./feature.js";
+import { type IndexFlags, runIndex } from "./indexer.js";
+import { type McpFlags, runMcp } from "./mcp.js";
+import type { StepResult } from "./run.js";
+import { commandExists, run } from "./run.js";
 import { runSkill, type SkillFlags } from "./skill.js";
-import { runMcp, type McpFlags } from "./mcp.js";
-import { runIndex, type IndexFlags } from "./indexer.js";
+import { agentsStep } from "./steps/agents.js";
+import { aiDocsStep } from "./steps/ai-docs.js";
+import { dockerStep } from "./steps/docker.js";
+import { envStep } from "./steps/env.js";
+import { gitStep } from "./steps/git.js";
+import { indexingStep } from "./steps/indexing.js";
+import { installStep } from "./steps/install.js";
+import { mcpStep } from "./steps/mcp.js";
+import { skillsStep } from "./steps/skills.js";
+import { srcLayoutStep } from "./steps/src-layout.js";
+import { viteStep } from "./steps/vite.js";
+import { NEPTR_BANNER, neptr, randomQuote } from "./theme.js";
+import { runWizard } from "./wizard.js";
 
 interface Step {
   name: string;
   enabled: (c: NEPTRConfig) => boolean;
+  // biome-ignore lint/suspicious/noConfusingVoidType: steps return a note string or nothing; Promise<void> steps must stay assignable
   run: (c: NEPTRConfig) => Promise<string | void>;
   /** Manual command shown in the summary if this step fails. */
   fix: (c: NEPTRConfig) => string;
@@ -186,9 +187,18 @@ program
   .argument("[name]", "project name")
   .description("Scaffold a new project")
   .option("-t, --template <template>", "Vite template (e.g. react-ts, vue-ts, svelte-ts)")
-  .option("--mcp <list>", "comma-separated MCP servers: context7,docker,github,memory,playwright,sequential-thinking (or 'none')")
-  .option("--skills <list>", "comma-separated skills.sh sources: owner/repo@skill, or owner/repo for a whole repo (or 'none')")
-  .option("--agents <list>", "comma-separated AI agents: claude,copilot,cursor,gemini,codex,opencode (or 'none'); AGENTS.md always included")
+  .option(
+    "--mcp <list>",
+    "comma-separated MCP servers: context7,docker,github,memory,playwright,sequential-thinking (or 'none')",
+  )
+  .option(
+    "--skills <list>",
+    "comma-separated skills.sh sources: owner/repo@skill, or owner/repo for a whole repo (or 'none')",
+  )
+  .option(
+    "--agents <list>",
+    "comma-separated AI agents: claude,copilot,cursor,gemini,codex,opencode (or 'none'); AGENTS.md always included",
+  )
   .option("--docker", "generate Docker setup")
   .option("--no-docker", "skip Docker setup")
   .option("--no-git", "skip git init")
@@ -218,9 +228,14 @@ program
 
 program
   .command("adopt")
-  .description("Retrofit NEPTR's scaffolding into the current project and generate an agent plan to restructure code, tests, docs, and Docker into NEPTR's layout")
+  .description(
+    "Retrofit NEPTR's scaffolding into the current project and generate an agent plan to restructure code, tests, docs, and Docker into NEPTR's layout",
+  )
   .option("-n, --name <name>", "slug for the migration workspace (default adopt-neptr-layout)")
-  .option("--agents <list>", "comma-separated AI agents: claude,copilot,cursor,gemini,codex,opencode (or 'none'); AGENTS.md always included")
+  .option(
+    "--agents <list>",
+    "comma-separated AI agents: claude,copilot,cursor,gemini,codex,opencode (or 'none'); AGENTS.md always included",
+  )
   .option("--no-index", "skip building the code index and installing its hooks")
   .option("--no-plan", "only retrofit the scaffolding; do not generate the migration workspace")
   .option("--no-docs", "skip the documentation inventory + migration workstream")
@@ -278,7 +293,9 @@ program
 program
   .command("mcp")
   .argument("[query...]", "what kind of MCP server to search for")
-  .description("Search the official MCP registry for safety-checked servers and add them to this project's .mcp.json and .cursor/mcp.json")
+  .description(
+    "Search the official MCP registry for safety-checked servers and add them to this project's .mcp.json and .cursor/mcp.json",
+  )
   .option("--limit <n>", "max number of servers to fetch and offer (default 12)")
   .option("--include-unverified", "also show servers with a caution/avoid verdict, not just safe ones")
   .option("--search-only", "list matching safety-checked servers without installing (for planning)")

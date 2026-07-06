@@ -1,6 +1,6 @@
 import path from "node:path";
-import { renderDir, renderFile, type TemplateVars } from "../template.js";
 import type { NEPTRConfig, ViteTemplate } from "../config.js";
+import { renderDir, renderFile, type TemplateVars } from "../template.js";
 
 const STACK_NAMES: Record<string, string> = {
   react: "React",
@@ -51,7 +51,9 @@ export function templateVars(config: NEPTRConfig): TemplateVars {
           ]
         : []),
       ...(config.docker
-        ? ["| [../Dockerfile](../Dockerfile), [../docker-compose.yml](../docker-compose.yml) | Container setup for dev and prod |"]
+        ? [
+            "| [../Dockerfile](../Dockerfile), [../docker-compose.yml](../docker-compose.yml) | Container setup for dev and prod |",
+          ]
         : []),
     ].join("\n"),
     stackExtras: config.docker

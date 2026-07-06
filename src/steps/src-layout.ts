@@ -1,7 +1,7 @@
-import path from "node:path";
 import fs from "node:fs";
-import { renderDir } from "../template.js";
+import path from "node:path";
 import type { NEPTRConfig } from "../config.js";
+import { renderDir } from "../template.js";
 
 /**
  * Lay the canonical section folders (from `templates/src-layout/`) into the

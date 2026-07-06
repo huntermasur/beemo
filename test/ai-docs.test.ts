@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { stackLabel, templateVars } from "../src/steps/ai-docs.js";
 import type { NEPTRConfig } from "../src/config.js";
+import { stackLabel, templateVars } from "../src/steps/ai-docs.js";
 
 describe("stackLabel", () => {
   it("labels TS and JS variants", () => {

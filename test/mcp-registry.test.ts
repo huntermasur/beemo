@@ -5,14 +5,14 @@ import {
   checkVendor,
   checkVersionPin,
   deriveServerConfig,
+  type FetchLike,
   gatherMcpCandidates,
   normalizeRegistry,
   parseGithubRepo,
   parseNamespace,
+  type RegistryServer,
   searchMcpServers,
   verifyServer,
-  type FetchLike,
-  type RegistryServer,
 } from "../src/mcp-registry.js";
 
 /** A trimmed registry `/v0/servers` response covering npm, oci, and remote-only. */
@@ -24,7 +24,9 @@ const SEARCH_BODY = JSON.stringify({
         description: "Browser automation for agents",
         version: "0.3.1",
         repository: { url: "https://github.com/microsoft/playwright-mcp", source: "github" },
-        packages: [{ registryType: "npm", identifier: "@playwright/mcp", version: "0.3.1", transport: { type: "stdio" } }],
+        packages: [
+          { registryType: "npm", identifier: "@playwright/mcp", version: "0.3.1", transport: { type: "stdio" } },
+        ],
       },
       _meta: { "io.modelcontextprotocol.registry/official": { status: "active", updatedAt: "2026-06-01T00:00:00Z" } },
     },
@@ -54,8 +56,16 @@ const SEARCH_BODY = JSON.stringify({
 
 /** GitHub repo detail responses keyed by owner/repo path. */
 const REPOS: Record<string, string> = {
-  "/repos/microsoft/playwright-mcp": JSON.stringify({ pushed_at: "2026-06-20T00:00:00Z", archived: false, open_issues_count: 12 }),
-  "/repos/someone/oci-tool": JSON.stringify({ pushed_at: "2020-01-01T00:00:00Z", archived: true, open_issues_count: 300 }),
+  "/repos/microsoft/playwright-mcp": JSON.stringify({
+    pushed_at: "2026-06-20T00:00:00Z",
+    archived: false,
+    open_issues_count: 12,
+  }),
+  "/repos/someone/oci-tool": JSON.stringify({
+    pushed_at: "2020-01-01T00:00:00Z",
+    archived: true,
+    open_issues_count: 300,
+  }),
 };
 
 function stubFetch(routes: Record<string, { status?: number; body: string }>): FetchLike {
@@ -89,12 +99,18 @@ describe("normalizeRegistry", () => {
 
 describe("parseNamespace / parseGithubRepo", () => {
   it("splits reverse-DNS namespaces and finds the github owner", () => {
-    expect(parseNamespace("io.github.microsoft/playwright-mcp")).toEqual({ prefix: "io.github.microsoft", githubOwner: "microsoft" });
+    expect(parseNamespace("io.github.microsoft/playwright-mcp")).toEqual({
+      prefix: "io.github.microsoft",
+      githubOwner: "microsoft",
+    });
     expect(parseNamespace("com.stripe/api")).toEqual({ prefix: "com.stripe", githubOwner: undefined });
   });
 
   it("extracts owner/repo from a github url", () => {
-    expect(parseGithubRepo("https://github.com/microsoft/playwright-mcp")).toEqual({ owner: "microsoft", repo: "playwright-mcp" });
+    expect(parseGithubRepo("https://github.com/microsoft/playwright-mcp")).toEqual({
+      owner: "microsoft",
+      repo: "playwright-mcp",
+    });
     expect(parseGithubRepo("https://github.com/foo/bar.git")).toEqual({ owner: "foo", repo: "bar" });
     expect(parseGithubRepo("https://example.com/repo")).toBeNull();
     expect(parseGithubRepo(undefined)).toBeNull();
@@ -103,12 +119,22 @@ describe("parseNamespace / parseGithubRepo", () => {
 
 describe("deriveServerConfig", () => {
   it("pins the version for npm, pypi, and oci", () => {
-    expect(deriveServerConfig(npmServer)).toEqual({ type: "stdio", command: "npx", args: ["-y", "@playwright/mcp@0.3.1"] });
+    expect(deriveServerConfig(npmServer)).toEqual({
+      type: "stdio",
+      command: "npx",
+      args: ["-y", "@playwright/mcp@0.3.1"],
+    });
     expect(
-      deriveServerConfig({ ...npmServer, packages: [{ registryType: "pypi", identifier: "markitdown", version: "0.1.2", hasEnvVars: false }] }),
+      deriveServerConfig({
+        ...npmServer,
+        packages: [{ registryType: "pypi", identifier: "markitdown", version: "0.1.2", hasEnvVars: false }],
+      }),
     ).toEqual({ type: "stdio", command: "uvx", args: ["markitdown@0.1.2"] });
     expect(
-      deriveServerConfig({ ...npmServer, packages: [{ registryType: "oci", identifier: "acme/img:1.0.0", version: "1.0.0", hasEnvVars: false }] }),
+      deriveServerConfig({
+        ...npmServer,
+        packages: [{ registryType: "oci", identifier: "acme/img:1.0.0", version: "1.0.0", hasEnvVars: false }],
+      }),
     ).toEqual({ type: "stdio", command: "docker", args: ["run", "-i", "--rm", "acme/img:1.0.0"] });
   });
 
@@ -130,20 +156,31 @@ describe("verifier checks", () => {
 
   it("flags broad access from keywords", () => {
     expect(checkBroadAccess(npmServer).detail).toContain("browser");
-    expect(checkBroadAccess({ ...npmServer, name: "com.acme/calc", description: "adds numbers", packages: [] }).status).toBe("ok");
+    expect(
+      checkBroadAccess({ ...npmServer, name: "com.acme/calc", description: "adds numbers", packages: [] }).status,
+    ).toBe("ok");
   });
 
   it("classifies runnability and version pinning", () => {
     expect(checkRunnable(npmServer).status).toBe("ok");
-    expect(checkRunnable({ ...npmServer, packages: [], remotes: [{ type: "http", url: "https://x" }] }).status).toBe("warn");
+    expect(checkRunnable({ ...npmServer, packages: [], remotes: [{ type: "http", url: "https://x" }] }).status).toBe(
+      "warn",
+    );
     expect(checkVersionPin(npmServer).status).toBe("ok");
-    expect(checkVersionPin({ ...npmServer, packages: [{ registryType: "npm", identifier: "x", hasEnvVars: false }] }).status).toBe("warn");
+    expect(
+      checkVersionPin({ ...npmServer, packages: [{ registryType: "npm", identifier: "x", hasEnvVars: false }] }).status,
+    ).toBe("warn");
   });
 });
 
 describe("verifyServer verdicts", () => {
   it("marks a vendor server with no broad access as safe", () => {
-    const server: RegistryServer = { ...npmServer, name: "io.github.microsoft/calc", description: "adds numbers", packages: [{ registryType: "npm", identifier: "calc", version: "1.0.0", hasEnvVars: false }] };
+    const server: RegistryServer = {
+      ...npmServer,
+      name: "io.github.microsoft/calc",
+      description: "adds numbers",
+      packages: [{ registryType: "npm", identifier: "calc", version: "1.0.0", hasEnvVars: false }],
+    };
     const v = verifyServer(server, { pushedAt: "2026-06-01T00:00:00Z", archived: false, openIssues: 3 });
     expect(v.verdict).toBe("safe");
   });
@@ -169,7 +206,12 @@ describe("verifyServer verdicts", () => {
   });
 
   it("stays safe when github activity is merely unknown", () => {
-    const server: RegistryServer = { ...npmServer, name: "io.github.microsoft/calc", description: "adds numbers", packages: [{ registryType: "npm", identifier: "calc", version: "1.0.0", hasEnvVars: false }] };
+    const server: RegistryServer = {
+      ...npmServer,
+      name: "io.github.microsoft/calc",
+      description: "adds numbers",
+      packages: [{ registryType: "npm", identifier: "calc", version: "1.0.0", hasEnvVars: false }],
+    };
     expect(verifyServer(server, null).verdict).toBe("safe");
   });
 });

@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
+import type { NEPTRConfig } from "../config.js";
 import { renderFile } from "../template.js";
 import { templateVars } from "./ai-docs.js";
-import type { NEPTRConfig } from "../config.js";
 
 /**
  * Generates the environment files: a committed `.env.example` template and a local

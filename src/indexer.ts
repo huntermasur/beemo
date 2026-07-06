@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
-import { neptr } from "./theme.js";
 import { run } from "./run.js";
 import { TEMPLATES_DIR } from "./template.js";
+import { neptr } from "./theme.js";
 
 export interface IndexFlags {
   /** Minimal output — used by the SessionStart and pre-commit hooks. */
@@ -125,8 +125,7 @@ function extractPurpose(content: string): string | undefined {
   if (first.startsWith("/**") || first.startsWith("/*")) {
     // Take the first non-empty content line of the block comment.
     for (let j = i; j < lines.length; j++) {
-      const cleaned = lines[j]!
-        .replace(/^\s*\/\*\*?/, "")
+      const cleaned = lines[j]!.replace(/^\s*\/\*\*?/, "")
         .replace(/\*\/\s*$/, "")
         .replace(/^\s*\*\s?/, "")
         .trim();
@@ -143,7 +142,7 @@ function extractPurpose(content: string): string | undefined {
   if (!text) return undefined;
   // Single line, capped so the map stays scannable.
   text = text.replace(/\s+/g, " ");
-  return text.length > 100 ? text.slice(0, 97) + "..." : text;
+  return text.length > 100 ? `${text.slice(0, 97)}...` : text;
 }
 
 /** Build the full REPO_MAP.md contents from the project's `src/` tree. */
@@ -160,7 +159,10 @@ export function buildRepoMap(root: string): string {
   for (const entry of entries) {
     const dir = entry.rel.includes("/") ? entry.rel.slice(0, entry.rel.lastIndexOf("/")) : ".";
     let bucket = byDir.get(dir);
-    if (!bucket) byDir.set(dir, (bucket = []));
+    if (!bucket) {
+      bucket = [];
+      byDir.set(dir, bucket);
+    }
     bucket.push(entry);
   }
 
@@ -179,7 +181,7 @@ export function buildRepoMap(root: string): string {
 
   if (entries.length === 0) {
     lines.push("_No source files found under `src/` yet._", "");
-    return lines.join("\n") + "\n";
+    return `${lines.join("\n")}\n`;
   }
 
   for (const dir of [...byDir.keys()].sort()) {
@@ -192,7 +194,7 @@ export function buildRepoMap(root: string): string {
     lines.push("");
   }
 
-  return lines.join("\n").replace(/\n+$/, "") + "\n";
+  return `${lines.join("\n").replace(/\n+$/, "")}\n`;
 }
 
 /** Write REPO_MAP.md. Returns true if the file changed on disk. */
@@ -319,7 +321,7 @@ function refreshKnowledgeMap(root: string, quiet: boolean): boolean {
 /** Flatten to a single markdown-table-safe cell: no newlines, escaped pipes, capped. */
 function tableCell(text: string, max = 110): string {
   const clean = text.replace(/\s+/g, " ").replace(/\|/g, "\\|").trim();
-  return clean.length > max ? clean.slice(0, max - 1).trimEnd() + "…" : clean;
+  return clean.length > max ? `${clean.slice(0, max - 1).trimEnd()}…` : clean;
 }
 
 /** Pull `name`/`description` out of a leading YAML frontmatter block, if present. */
@@ -330,7 +332,7 @@ function parseFrontmatter(content: string): { name?: string; description?: strin
   for (const line of m[1]!.split(/\r?\n/)) {
     const kv = /^(name|description)\s*:\s*(.*)$/.exec(line);
     if (!kv) continue;
-    let val = kv[2]!.trim().replace(/^["']|["']$/g, "");
+    const val = kv[2]!.trim().replace(/^["']|["']$/g, "");
     if (val) out[kv[1] as "name" | "description"] = val;
   }
   return out;
@@ -422,7 +424,8 @@ function skillsTable(root: string): string {
   const rows = collectSkills(root);
   if (rows.length === 0) return '_No skills installed yet. Add one with `neptr skill "<keywords>"`._';
   const lines = ["| Skill | What it's for |", "| --- | --- |"];
-  for (const r of rows) lines.push(`| \`${tableCell(r.name, 60)}\` | ${r.description ? tableCell(r.description) : "—"} |`);
+  for (const r of rows)
+    lines.push(`| \`${tableCell(r.name, 60)}\` | ${r.description ? tableCell(r.description) : "—"} |`);
   return lines.join("\n");
 }
 
@@ -487,8 +490,10 @@ function installClaudeHook(root: string): void {
     }
   }
 
-  const hooks = (settings.hooks ??= {}) as Record<string, unknown>;
-  const sessionStart = (hooks.SessionStart ??= []) as Array<{ hooks?: Array<{ command?: string }> }>;
+  settings.hooks ??= {};
+  const hooks = settings.hooks as Record<string, unknown>;
+  hooks.SessionStart ??= [];
+  const sessionStart = hooks.SessionStart as Array<{ hooks?: Array<{ command?: string }> }>;
 
   const alreadyThere = sessionStart.some((group) =>
     (group.hooks ?? []).some((h) => typeof h.command === "string" && h.command.includes("neptr index")),
@@ -497,7 +502,7 @@ function installClaudeHook(root: string): void {
 
   sessionStart.push({ hooks: [{ type: "command", command: SESSION_START_COMMAND }] } as never);
   fs.mkdirSync(path.dirname(dest), { recursive: true });
-  fs.writeFileSync(dest, JSON.stringify(settings, null, 2) + "\n");
+  fs.writeFileSync(dest, `${JSON.stringify(settings, null, 2)}\n`);
 }
 
 /**
@@ -510,7 +515,7 @@ function installGitAttributes(root: string): void {
   const dest = path.join(root, ".gitattributes");
   const existing = fs.existsSync(dest) ? fs.readFileSync(dest, "utf8") : "";
   if (existing.includes("# NEPTR generated docs")) return;
-  fs.writeFileSync(dest, (existing.trimEnd() ? existing.trimEnd() + "\n\n" : "") + src);
+  fs.writeFileSync(dest, (existing.trimEnd() ? `${existing.trimEnd()}\n\n` : "") + src);
 }
 
 /** Copy the tracked pre-commit hook into .githooks/ and mark it executable. */

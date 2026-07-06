@@ -1,7 +1,7 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { buildRepoMap, installIndexing, runIndex } from "../src/indexer.js";
 
 /** Minimal project: a src/ file plus marker-bearing hub docs in the given EOL. */

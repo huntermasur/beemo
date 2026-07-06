@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  type FetchLike,
   gatherCandidates,
   isGithubSource,
   isSafeInstallArg,
@@ -7,7 +8,6 @@ import {
   searchSkills,
   toInstallArg,
   verdictFromAudits,
-  type FetchLike,
 } from "../src/skills-registry.js";
 
 /** A trimmed copy of the real skills.sh "Security Audits" section markup. */
@@ -85,8 +85,18 @@ describe("verdictFromAudits", () => {
   });
 
   it("downgrades to warn on any warning and fail on any failure", () => {
-    expect(verdictFromAudits([{ provider: "a", status: "pass" }, { provider: "b", status: "warn" }])).toBe("warn");
-    expect(verdictFromAudits([{ provider: "a", status: "warn" }, { provider: "b", status: "fail" }])).toBe("fail");
+    expect(
+      verdictFromAudits([
+        { provider: "a", status: "pass" },
+        { provider: "b", status: "warn" },
+      ]),
+    ).toBe("warn");
+    expect(
+      verdictFromAudits([
+        { provider: "a", status: "warn" },
+        { provider: "b", status: "fail" },
+      ]),
+    ).toBe("fail");
   });
 });
 
@@ -114,7 +124,13 @@ describe("gatherCandidates", () => {
   it("keeps popular GitHub skills, drops low-install and non-GitHub, and attaches verdicts", async () => {
     const search = JSON.stringify({
       skills: [
-        { id: "vercel-labs/agent-skills/web-design-guidelines", skillId: "web-design-guidelines", name: "web-design-guidelines", installs: 435612, source: "vercel-labs/agent-skills" },
+        {
+          id: "vercel-labs/agent-skills/web-design-guidelines",
+          skillId: "web-design-guidelines",
+          name: "web-design-guidelines",
+          installs: 435612,
+          source: "vercel-labs/agent-skills",
+        },
         { id: "some/repo/tiny", skillId: "tiny", name: "tiny", installs: 5, source: "some/repo" },
         { id: "open.feishu.cn/lark", skillId: "lark", name: "lark", installs: 99999, source: "open.feishu.cn" },
       ],

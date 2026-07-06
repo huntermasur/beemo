@@ -1,9 +1,9 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { detectDocker } from "../src/adopt-scan.js";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { buildComposeBlocks, writeDockerDrafts } from "../src/adopt-docker.js";
+import { detectDocker } from "../src/adopt-scan.js";
 
 let dir: string;
 beforeEach(() => {
@@ -19,7 +19,9 @@ describe("buildComposeBlocks", () => {
     const blocks = buildComposeBlocks(scan, "my-app");
     expect(blocks.services).toContain("postgres:");
     expect(blocks.services).toContain("image: postgres:16-alpine");
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: literal compose ${VAR:-default} interpolation
     expect(blocks.services).toContain("POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}");
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: literal compose ${VAR:-default} interpolation
     expect(blocks.services).toContain("POSTGRES_DB: ${POSTGRES_DB:-my-app}");
     expect(blocks.services).toContain("redis:7-alpine");
     expect(blocks.dependsOn).toContain("- postgres");

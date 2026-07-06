@@ -48,7 +48,11 @@ export interface SkillCandidate extends SkillSearchResult {
   installArg: string;
 }
 
-async function fetchText(url: string, fetchImpl: FetchLike, timeoutMs = 15_000): Promise<{ status: number; text: string }> {
+async function fetchText(
+  url: string,
+  fetchImpl: FetchLike,
+  timeoutMs = 15_000,
+): Promise<{ status: number; text: string }> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -93,7 +97,11 @@ function describeHttpError(status: number, service: string): string {
  * Search skills.sh. Returns up to `limit` results ordered as the API ranks them.
  * Throws on a non-200 response or malformed JSON so the caller can report it.
  */
-export async function searchSkills(query: string, limit: number, fetchImpl: FetchLike = fetch): Promise<SkillSearchResult[]> {
+export async function searchSkills(
+  query: string,
+  limit: number,
+  fetchImpl: FetchLike = fetch,
+): Promise<SkillSearchResult[]> {
   const url = `${BASE}/api/search?q=${encodeURIComponent(query)}`;
   const { status, text } = await fetchText(url, fetchImpl);
   if (status !== 200) {
@@ -153,8 +161,7 @@ export function parseAudits(html: string): AuditEntry[] {
   const section = end === -1 ? html.slice(start) : html.slice(start, end);
   const entries: AuditEntry[] = [];
   const re = /truncate">([^<]+)<\/span><span[^>]*>(Pass|Warn|Fail)<\/span>/gi;
-  let match: RegExpExecArray | null;
-  while ((match = re.exec(section)) !== null) {
+  for (const match of section.matchAll(re)) {
     const provider = decodeEntities((match[1] ?? "").trim());
     const status = normalizeStatus(match[2] ?? "");
     if (provider) entries.push({ provider, status });

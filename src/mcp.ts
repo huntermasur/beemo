@@ -2,16 +2,16 @@ import fs from "node:fs";
 import path from "node:path";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { bail, ensure } from "./prompts.js";
 import { MCP_CONFIG_FILES } from "./config.js";
-import { neptr } from "./theme.js";
 import {
-  gatherMcpCandidates,
   type Check,
+  gatherMcpCandidates,
   type McpCandidate,
   type McpServerConfig,
   type Verdict,
 } from "./mcp-registry.js";
+import { bail, ensure } from "./prompts.js";
+import { neptr } from "./theme.js";
 
 export interface McpFlags {
   limit?: string;
@@ -106,7 +106,11 @@ function reportSearchOnly(term: string, shown: McpCandidate[], total: number): v
 function serverKey(candidate: McpCandidate, taken: Set<string>): string {
   // Prefer the trailing name segment of the reverse-DNS namespace.
   const raw = candidate.name.includes("/") ? candidate.name.slice(candidate.name.lastIndexOf("/") + 1) : candidate.name;
-  const base = raw.toLowerCase().replace(/[^a-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "") || "mcp-server";
+  const base =
+    raw
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "mcp-server";
   let key = base;
   let i = 2;
   while (taken.has(key)) key = `${base}-${i++}`;
@@ -146,7 +150,7 @@ function mergeIntoFile(file: string, entries: Record<string, McpServerConfig>): 
   const config = readMcpJson(file);
   Object.assign(config.mcpServers as Record<string, McpServerConfig>, entries);
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, JSON.stringify(config, null, 2) + "\n");
+  fs.writeFileSync(file, `${JSON.stringify(config, null, 2)}\n`);
 }
 
 /**
@@ -301,11 +305,16 @@ export async function runMcp(query: string | undefined, flags: McpFlags): Promis
   }
 
   if (outcome.added.length) {
-    p.note(outcome.added.map((k) => `${pc.green("✔")} ${k}`).join("\n"), `Added to ${MCP_FILES_LABEL} (version-pinned)`);
+    p.note(
+      outcome.added.map((k) => `${pc.green("✔")} ${k}`).join("\n"),
+      `Added to ${MCP_FILES_LABEL} (version-pinned)`,
+    );
   }
   if (outcome.needSecret.length) {
     p.note(
-      outcome.needSecret.map((k) => `${pc.yellow("⚠")} ${k} — declares environment variables; fill in credentials by hand`).join("\n"),
+      outcome.needSecret
+        .map((k) => `${pc.yellow("⚠")} ${k} — declares environment variables; fill in credentials by hand`)
+        .join("\n"),
       "These need a secret",
     );
   }
