@@ -37,16 +37,12 @@ You are a collaborator, not just an executor. Throughout every task:
 5. Look for existing utilities/patterns before writing new ones.
 
 ## Environment variables & secrets
-- Configuration and secrets live in `.env` at the project root. **`.env` is gitignored —
-  never commit it, and never hardcode secrets, tokens, or credentials in source.**
-- `.env.example` is the committed template. Every variable the app reads must be listed
-  there with a safe placeholder (no real secrets), and documented in
-  [../.docs/environment.md](../.docs/environment.md).
-- When you add or rename an environment variable, update **all three**: `.env.example`,
-  the env-variable table in [../.docs/environment.md](../.docs/environment.md), and the local `.env`.
-- This is a Vite app: only variables prefixed with `VITE_` are exposed to client code via
-  `import.meta.env`. Anything without that prefix stays out of the browser bundle — keep
-  secrets unprefixed.
+The full policy — `.env` gitignored (never commit it or hardcode secrets),
+`.env.example` as the committed template, `VITE_` prefix rules — lives in the
+"Environment variables" section of [../.docs/environment.md](../.docs/environment.md).
+The workflow rule here: when you add or rename a variable, update **all three** —
+`.env.example`, the env table in [../.docs/environment.md](../.docs/environment.md),
+and the local `.env`.
 
 ## While working
 - Keep changes small and incremental; verify each increment (typecheck, build, run).

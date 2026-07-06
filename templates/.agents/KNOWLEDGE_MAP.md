@@ -1,8 +1,9 @@
 # Knowledge Map — {{projectName}}
 
 The single starting point for understanding this codebase: where everything lives and
-which files matter most. **Agents: read this before your first change in a session.
-Everyone: update it whenever project structure changes.** Last updated: {{date}}.
+which files matter most. Read it before your first change in a session. Maintained by
+`neptr index` (the marker tables) and by agents — when to update it is defined in the
+"Before you finish" policy of [AI_INSTRUCTIONS.md](AI_INSTRUCTIONS.md). Last updated: {{date}}.
 
 ## Documentation index
 

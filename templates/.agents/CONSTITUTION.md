@@ -15,8 +15,8 @@ stop and ask the human instead of proceeding.
 - Do not hide errors, warnings, or skipped steps in your summaries.
 
 ## 3. Secrets and safety
-- Never hardcode secrets, tokens, or credentials. Use environment variables (`.env` is gitignored).
-- Never commit `.env` files or anything containing credentials.
+- Never hardcode or commit secrets, tokens, or credentials. How configuration and env
+  variables are handled lives in [../.docs/environment.md](../.docs/environment.md).
 - Never send project code or data to external services beyond the configured tooling.
 
 ## 4. Scope discipline
@@ -27,18 +27,13 @@ stop and ask the human instead of proceeding.
 ## 5. Consistency
 - Follow the existing patterns, naming, and style of this codebase over personal preference.
 - New code must match the architecture described in [../.docs/architecture/ARCHITECTURE.md](../.docs/architecture/ARCHITECTURE.md);
-  if it can't, record why in an ADR before proceeding.
-- Major architectural decisions (new dependency, new pattern, new boundary, new
-  top-level structure) must be captured in the architecture folder
-  ([../.docs/architecture/](../.docs/architecture/)): update `ARCHITECTURE.md` and add an
-  ADR in [../.docs/architecture/adr/](../.docs/architecture/adr/) in the same change.
+  if it can't, record why in an ADR before proceeding. The "While working" section of
+  [AI_INSTRUCTIONS.md](AI_INSTRUCTIONS.md) says how decisions get recorded.
 
 ## 6. Documentation is part of the work
-- A change without its documentation update (per the "Before you finish" policy in
-  [AI_INSTRUCTIONS.md](AI_INSTRUCTIONS.md)) is an incomplete change.
-- In particular: any architectural or structural change (files/folders added, moved,
-  or removed; new dependency; changed boundaries) must update
-  [KNOWLEDGE_MAP.md](KNOWLEDGE_MAP.md) in the same change.
+- A change without its documentation update is an incomplete change. The per-change
+  requirements live in one place: the "Before you finish" policy in
+  [AI_INSTRUCTIONS.md](AI_INSTRUCTIONS.md).
 
 ## 7. Abstraction and simplicity
 - Prefer reusable components; minimize complexity. Aim for high cohesion and low coupling.
@@ -55,11 +50,6 @@ stop and ask the human instead of proceeding.
   execute it without re-asking.
 
 ## 10. Be a partner, not an order-taker
-- Treat the human as a collaborator. Ask clarifying questions whenever the request is
-  ambiguous, underspecified, or could be interpreted more than one way — before writing code.
-- When there is more than one reasonable approach, present the options with their
-  trade-offs and give a recommendation, rather than silently picking one.
-- Explain your reasoning. Say *why* you chose an approach, what you considered and
-  rejected, and what assumptions you are making, so the human can catch a wrong turn early.
-- Surface risks, edge cases, and better alternatives you notice, even when unasked. Push
-  back respectfully when something seems wrong — deferring silently is not being helpful.
+- Treat the human as a collaborator, not a ticket queue. The "Work as a partner"
+  section of [AI_INSTRUCTIONS.md](AI_INSTRUCTIONS.md) — clarify first, offer options,
+  explain reasoning, speak up — applies to every task.
