@@ -5,8 +5,10 @@ AI-ready setup: a `.agents/` hub (constitution, AI instructions, a single knowle
 plus a `skills/` folder for installed skills), a `.docs/` tree
 (`environment.md` for how to run the project, `module-map.md` for where component types
 live, an `architecture/` folder with ARCHITECTURE.md + ADRs, a `feature/` folder for
-`neptr feature` workspaces, and a `documents/` folder for user documents), MCP config,
-skills.sh skills, and Docker.
+`neptr feature` workspaces, and a `documents/` folder for user documents), a canonical
+role-based `src/` layout (`app/`, `modules/`, `services/`, `data/`, `integrations/`,
+`shared/`, `config/`) plus a root `tests/` folder, MCP config, skills.sh skills, and
+Docker.
 
 ## Commands
 - `npm run build` — bundle `src/cli.ts` to `dist/cli.js` via tsup
@@ -36,7 +38,11 @@ skills.sh skills, and Docker.
 - `src/run.ts` — execa wrapper with themed spinners
 - `src/steps/*.ts` — one module per scaffold step, each exporting `run(config)`
   (`steps/agents.ts` generates root agent instruction files — CLAUDE.md, AGENTS.md
-  (always), copilot/cursor/gemini — that force-read `.agents/` and skim skills/docs)
+  (always), copilot/cursor/gemini — that force-read `.agents/` and skim skills/docs;
+  `steps/src-layout.ts` lays the canonical role-based sections under `src/` —
+  `app/`, `modules/`, `services/`, `data/`, `integrations/`, `shared/`, `config/` (from
+  `templates/src-layout/`) — plus a root `tests/` folder (from `templates/tests/`),
+  each seeded with a README)
 - `templates/` — every file generated into scaffolded projects; ships in the npm package
 
 ## Conventions

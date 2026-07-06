@@ -7,6 +7,7 @@ import { configFromFlags, type NEPTRConfig, type NewFlags } from "./config.js";
 import { runWizard } from "./wizard.js";
 import type { StepResult } from "./run.js";
 import { viteStep } from "./steps/vite.js";
+import { srcLayoutStep } from "./steps/src-layout.js";
 import { aiDocsStep } from "./steps/ai-docs.js";
 import { agentsStep } from "./steps/agents.js";
 import { mcpStep } from "./steps/mcp.js";
@@ -38,6 +39,12 @@ const STEPS: Step[] = [
     run: viteStep,
     fix: (c) => `npm create vite@latest ${c.projectName} -- --template ${c.template}`,
     critical: true,
+  },
+  {
+    name: "Lay out src/ sections",
+    enabled: () => true,
+    run: srcLayoutStep,
+    fix: () => "create src/{app,modules,services,data,integrations,shared,config}/ and tests/ by hand",
   },
   {
     name: "Generate AI & docs layer",

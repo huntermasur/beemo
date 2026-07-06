@@ -6,27 +6,40 @@ agent finds it in one hop. For the whole-repo folder layout and key files, see
 [../.agents/KNOWLEDGE_MAP.md](../.agents/KNOWLEDGE_MAP.md); for *why* the boundaries are
 what they are, see [architecture/ARCHITECTURE.md](architecture/ARCHITECTURE.md).
 
-## Component types
+## Sections
 
-| Type | Where it lives | Notes |
-| --- | --- | --- |
-| UI components | `src/components/` | Reusable presentational pieces |
-| Routes / pages | `src/routes/` or `src/pages/` | Top-level views wired to the router |
-| State / stores | `src/stores/` or `src/state/` | Shared application state |
-| Hooks / composables | `src/hooks/` or `src/composables/` | Reusable stateful logic |
-| Services / API clients | `src/services/` or `src/api/` | Talking to the outside world |
-| Utilities | `src/utils/` or `src/lib/` | Pure helpers, no framework coupling |
-| Types | `src/types/` | Shared type declarations |
-| Styles / assets | `src/styles/`, `src/assets/` | Global CSS, fonts, images |
+`src/` is organized by role, not by file type. Each section ships a `README.md`
+describing its purpose. Put new code in the section that matches what it *does*.
 
-> Seeded with common {{stack}} conventions. This project is freshly scaffolded — adjust
-> the rows to match the folders that actually exist, and delete the ones you don't use.
-> Every top-level folder under `src/` should map to a row here.
+| Section | What lives here |
+| --- | --- |
+| `src/app/` | App startup, routing, main entrypoints, server setup, UI shell |
+| `src/modules/` | Main features / capabilities — one folder per feature |
+| `src/services/` | Reusable logic that does real work (business rules) |
+| `src/data/` | Database, storage, repositories, models, migrations |
+| `src/integrations/` | External APIs — Discord, Stripe, OpenAI, GitHub, email, etc. |
+| `src/shared/` | Utils, types, schemas, constants, hooks, common helpers |
+| `src/config/` | Environment variables, settings, feature flags |
+
+Tests live in `tests/` at the **project root** (helpers, mocks, fixtures, and
+cross-cutting integration/e2e suites); unit tests can instead sit next to the code they
+cover as `*.test.ts` inside `src/`.
+
+> Seeded for a {{stack}} project. The Vite template's own entry files (main, App, styles)
+> stay where the template put them — move them under `src/app/` as the shell grows. Adjust
+> these rows to match the folders that actually exist, and keep this table in sync with the
+> section READMEs.
 
 ## Module boundaries
 
-<!-- Rules for how these pieces may depend on each other as the project grows, e.g.
-"components never import from services directly; routes wire them together." Keep this in
-sync with the "Module boundaries" section of architecture/ARCHITECTURE.md. -->
+<!-- Keep this in sync with the "Module boundaries" section of
+architecture/ARCHITECTURE.md as the rules get more specific. -->
 
-- _None defined yet — add the first rule when `src/` gains real structure._
+Dependencies flow downward; nothing imports upward:
+
+- `app/` wires everything together — nothing else imports from `app/`.
+- `modules/` may use `services/`, `data/`, `integrations/`, `shared/`, and `config/`,
+  but modules should not import from each other.
+- `services/` orchestrate `data/` and `integrations/`; they stay free of UI concerns.
+- `data/` is the only section that talks to the persistence layer directly.
+- `shared/` and `config/` are the lowest layers — they import from nothing else in `src/`.
